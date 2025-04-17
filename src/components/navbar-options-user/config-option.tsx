@@ -1,0 +1,51 @@
+"use client";
+
+import Cookies from "js-cookie";
+import { LogOut } from "lucide-react";
+import { ModalOptions } from "../modal-options";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { useRef } from "react";
+import { useClickOutside } from "@/hooks/use-click-outside";
+import { FaUser } from "react-icons/fa";
+
+interface NavBarUserConfigOptionProps {
+  close: () => void;
+}
+
+const LogoutToast = () => (
+  <div className="text-indigo-200">Logout realizado</div>
+);
+
+export const NavbarUserConfigOption = (props: NavBarUserConfigOptionProps) => {
+  const { close } = props;
+  const ref = useRef<HTMLDivElement>(null);
+
+  const router = useRouter();
+
+  useClickOutside(ref, close);
+
+  const logout = () => {
+    Cookies.remove("token");
+
+    toast(<LogoutToast />, {
+      hideProgressBar: true,
+    });
+
+    router.push("/login");
+  };
+
+  return (
+    <ModalOptions.container ref={ref}>
+      <ModalOptions.button onClick={logout} name="logout">
+        <LogOut size={14} />
+      </ModalOptions.button>
+      <ModalOptions.button
+        onClick={() => router.push("/my-profile")}
+        name="Perfil"
+      >
+        <FaUser size={14} />
+      </ModalOptions.button>
+    </ModalOptions.container>
+  );
+};

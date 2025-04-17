@@ -1,0 +1,16 @@
+.background-in {
+  background-color: #02004a;
+
+  background-size: 100% 100%;
+  background-position: 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px;
+
+  background-image: radial-gradient(
+      40vh 40% at 30% -10%,
+      #0083c780,
+      transparent
+    ),
+    radial-gradient(40vh 40vh at 60% 20%, #000030, transparent),
+				radial-gradient(40vh 40vh at -2% 50%, #000030, transparent),
+    radial-gradient(60vh 50vh at 100% 20%, #0083c7, transparent),
+    radial-gradient(80vh 80vh at 40% 100%, #0083c760, transparent);
+}
