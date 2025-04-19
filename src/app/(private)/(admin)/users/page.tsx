@@ -7,7 +7,7 @@ import { Search } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React, { Suspense } from "react";
-import { FaAt, FaRegTrashCan } from "react-icons/fa6";
+import { FaAt, FaRegTrashCan, FaWhatsapp } from "react-icons/fa6";
 import { LuPen } from "react-icons/lu";
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { PiUserCircleGearFill } from "react-icons/pi";
@@ -79,7 +79,7 @@ const TableHeader: React.FC = () => (
 const TableRow = (props: { user: IUser }) => {
   const { user } = props;
   return (
-    <tr className="divide-x border-zinc-100 divide-zinc-100 hover:bg-zinc-50">
+    <tr className="divide-x border-zinc-100 divide-zinc-100 hover:bg-zinc-50/40">
       <td className="gap-2 p-1 px-3">
         <div className="flex items-center gap-1">
           <div className="w-6 h-6 bg-zinc-100 rounded-full" />
@@ -104,7 +104,7 @@ const TableRow = (props: { user: IUser }) => {
       </td>
 
       <td className="p-1 px-3">25 jun 2024, 3:23 pm</td>
-      <td className="p-1 px-3 w-0">
+      <td className="p-1 px-1 w-0">
         <Actions userId={user.id.toString()} />
       </td>
     </tr>
@@ -114,13 +114,20 @@ const TableRow = (props: { user: IUser }) => {
 const Actions = ({ userId }: { userId: string }) => (
   <div className="flex gap-1 items-center">
     <Link
+      href={`?modal=whats&userId=${userId}`}
+      className="flex items-center gap-2 border hover:text-black hover:shadow transition-all border-zinc-200 text-zinc-800 p-1 px-2 rounded-md opacity-80 hover:opacity-100"
+    >
+      <FaWhatsapp />
+      <span>Whatsapp</span>
+    </Link>
+    <Link
       href={`?modal=edit-user&userId=${userId}`}
-      className="flex items-center gap-2 bg-gray-50 text-zinc-800 p-1 px-2 rounded-md opacity-80 hover:opacity-100"
+      className="flex items-center gap-2 border hover:text-black hover:shadow transition-all border-zinc-200 text-zinc-800 p-1 px-2 rounded-md opacity-80 hover:opacity-100"
     >
       <LuPen />
       <span>Editar</span>
     </Link>
-    <button className="flex items-center gap-2 bg-gray-50 text-zinc-800 p-1 px-2 rounded-md opacity-80 hover:opacity-100">
+    <button className="flex items-center gap-2 border hover:text-black hover:shadow transition-all border-zinc-200 text-zinc-800 p-1 px-2 rounded-md opacity-80 hover:opacity-100">
       <FaRegTrashCan />
       <span>Deletar</span>
     </button>

@@ -19,7 +19,7 @@ const ModalContainer = (props: HTMLMotionProps<"div">) => {
   const { className, ...rest } = props;
 
   const style = twMerge(
-    "flex fixed top-0 w-full left-0 h-screen z-40 bg-blue-50/10 text-zinc-500",
+    "flex fixed top-0 w-full left-0 h-screen z-40 bg-blue-900/5 backdrop-blur-[1px] text-zinc-500 overflow-auto p-3",
     className
   );
 
@@ -51,7 +51,7 @@ export const ModalForm = (props: ModalFormProps) => {
       animate={{ scaleY: 1, opacity: 1, filter: "blur(0px)" }}
       exit={{ scaleY: 0.4, opacity: 0, filter: "blur(20px)" }}
       transition={{
-        duration: 0.4,
+        duration: 0.2,
         type: "spring",
         filter: { duration: 0.1 },
       }}
@@ -73,7 +73,7 @@ const ModalHeader = (
     <header className={classStyle} {...rest}>
       <h1 className={`${fontOpenSans}`}>{title}</h1>
       <Link href="?" className="w-8 h-8 hover:bg-zinc-100 grid place-items-center rounded-lg">
-        <IoClose />
+        <IoClose size={20}/>
       </Link>
     </header>
   );

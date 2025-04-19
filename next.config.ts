@@ -1,8 +1,12 @@
-
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['pps.whatsapp.net'], // Add your new hostname here
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'pps.whatsapp.net',
+      },
+    ],
   },
 };
 

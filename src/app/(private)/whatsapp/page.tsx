@@ -75,6 +75,24 @@ export default function Whatsapp() {
   const { whatsapps, page } = useWhatsapp();
   const { client, admin } = whatsapps;
 
+  if (!client && !admin?.total) {
+    return (
+      <div className="w-full items-center justify-center min-h-[30rem] shadow-inner shadow-gray-600/20 flex-col flex bg-white p-6 rounded-xl">
+        <div className="text-indigo-500/80 font-semibold text-lg">
+          Você ainda não tem nenhuma instância
+        </div>
+
+        <Link
+          href={{ query: { modal: "create" } }}
+          className="p-2 px-4 flex items-center mt-5 gap-2 transition-all rounded-lg bg-indigo-500 shadow-md hover:shadow-xl opacity-80 hover:opacity-100 shadow-indigo-500/30"
+        >
+          <span className={`${fontInter} font-semibold`}>Instancia</span>
+          <FaPlus size={15} />
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-col flex gap-2 bg-white/60 p-6 border rounded-xl">
       <header className="flex-1 flex gap-2 items-center">
@@ -98,6 +116,10 @@ export default function Whatsapp() {
         {admin?.whatsapps?.map((data, index) => {
           return <WhatsappCard key={index} whatsapp={data} />;
         })}
+
+        <button className="w-20 h-20 bg-white rounded-xl border border-indigo-500/40 m-2 border-dashed grid place-items-center">
+          <FaPlus size={20} className="text-indigo-300" />
+        </button>
       </section>
 
       {admin?.whatsapps?.length && (
@@ -111,7 +133,7 @@ const WhatsappCard = (props: { whatsapp: IWhatsapp }) => {
   const { whatsapp } = props;
 
   return (
-    <div className="p-4 flex flex-col bg-gray-500/10 border mt-2 text-zinc-500 gap-2 rounded-lg w-full">
+    <div className="p-4 flex flex-col bg-gray-300/10 border mt-2 text-zinc-500 gap-2 rounded-lg w-full">
       <header className="flex items-center justify-between">
         <div>
           <h1 className={`${fontSaira} font-semibold`}>

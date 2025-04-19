@@ -1,3 +1,4 @@
+import { Loader } from "@/components/loader";
 import { Modal } from "@/components/modal-base";
 import { QRCodeDecoder } from "@/components/qr-decoder";
 import { queryClient } from "@/providers/query-provider";
@@ -52,7 +53,7 @@ export const GenerateQrCode = () => {
 
   return (
     <Modal.container>
-      <Modal.form className="p-4 flex justify-center shadow-lg rounded-xl items-center">
+      <Modal.form className="p-4 flex justify-center border border-zinc-200 rounded-xl items-center">
         <Modal.header title="Gerar" />
         <h2
           className={`${fontSaira} text-2xl mt-5 text-center font-semibold text-gray-600`}
@@ -60,6 +61,12 @@ export const GenerateQrCode = () => {
           Scaneia o QR Code para conectar seu whatsapp
         </h2>
         {data?.base64 && <QRCodeDecoder base64={data?.base64} />}
+
+        {!data?.base64 && (
+          <div className="relative mb-10">
+            <Loader className="text-zinc-800 my-6" />
+          </div>
+        )}
       </Modal.form>
     </Modal.container>
   );

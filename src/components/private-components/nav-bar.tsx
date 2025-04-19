@@ -8,6 +8,7 @@ import { useContext, useState } from "react";
 import { ModalType } from "../modal-options";
 import { NavbarUserConfigOption } from "../navbar-options-user/config-option";
 import { NavBarNotificationOption } from "../navbar-options-user/notifications.option";
+import { fontInter } from "@/utils/fonts";
 
 export const Navbar = () => {
   const { informations } = useContext(UserContext);
@@ -18,7 +19,7 @@ export const Navbar = () => {
   };
 
   return (
-    <div className="flex items-center justify-between mb-6 text-gray-500 relative">
+    <div className="flex items-center justify-between mb-6 text-gray-500 relative z-20">
       <div></div>
       <div className="flex items-center gap-4">
         <div className="">
@@ -48,13 +49,15 @@ export const Navbar = () => {
           </Avatar>
 
           {informations?.email && (
-            <div className="text-right flex flex-col -space-y-1">
-              <span className="font-medium">{informations?.nome}</span>
+            <div className={`${fontInter} text-gray-500 text-right flex flex-col text-sm -space-y-1`}>
+              <span className="text-base">{informations?.nome}</span>
+              
               {informations?.role === UserRole.ADMIN && (
-                <span className="text-sm text-gray-600">
+                <span className={`text-xs`}>
                   {informations?.role}
                 </span>
               )}
+            
             </div>
           )}
 

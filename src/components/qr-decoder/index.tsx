@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import QrScanner from "qr-scanner";
 import Image from "next/image";
+import { toast } from "react-toastify";
 
 interface QRCodeDecoderProps {
   base64: string;
@@ -26,6 +27,9 @@ export function QRCodeDecoder({ base64 }: QRCodeDecoderProps) {
     };
 
     img.onload = handleImageLoad;
+    img.onerror = () => {
+      toast("Houve um erro ao tentar gerar um QR code")
+    };
 
     return () => {
       img.onload = null;

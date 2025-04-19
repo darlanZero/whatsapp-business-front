@@ -11,9 +11,10 @@ import { AdminPages } from "./admin-pages";
 import { ConfigurationPage } from "./configuration-pages";
 import { SaveContacts } from "./save-contacts";
 import { SidebarSkeleton } from "./sidebar-skeleton";
+import { usePathname, useRouter } from "next/navigation";
 
 const HeaderSidebar = () => (
-  <div className="p-6">
+  <div className="p-4">
     <div className="flex items-center gap-3">
       <div className="bg-blue-600 text-white p-2 rounded-md">
         <svg
@@ -34,10 +35,19 @@ const HeaderSidebar = () => (
 );
 
 const SidebarButtons = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+
   return (
     <>
       <Menu.Container>
-        <Menu.Trigger icon={Home} label="Dashboard" />
+        <Menu.Trigger
+          selected={pathname.startsWith("/dashboard")}
+          onPress={() => router.push("/dashboard")}
+          isTri={false}
+          icon={Home}
+          label="Dashboard"
+        />
       </Menu.Container>
 
       <SaveContacts />
@@ -88,7 +98,7 @@ const SidebarComponent = () => {
   }
 
   return (
-    <div className="flex-1 flex-col flex px-4 gap-2 w-full">
+    <div className="flex-1 flex-col flex px-3 gap-2 w-full">
       <SidebarButtons />
       {informations?.role === UserRole.ADMIN && <AdminPages />}
       <PremiumSection />
@@ -161,7 +171,7 @@ export const Sidebar = () => {
       </div>
 
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex bottom-0 w-full max-w-[16rem] bg-white border-r border-gray-200 flex-col h-screen overflow-auto">
+      <div className="hidden md:flex bottom-0 w-auto max-w-[20rem]  bg-white border-r border-gray-200 flex-col h-screen overflow-auto">
         <HeaderSidebar />
         <SidebarComponent />
       </div>

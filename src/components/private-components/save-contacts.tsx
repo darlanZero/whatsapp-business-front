@@ -1,12 +1,12 @@
 "use client";
 
-import { Users } from "lucide-react";
+import { FaRegUser } from "react-icons/fa6";
 import { Menu } from "../menu-section";
 
 export const SaveContacts = () => {
   return (
     <Menu.Container>
-      <Menu.Trigger icon={Users} label="Contatos" />
+      <Menu.Trigger icon={FaRegUser} label="Contatos" />
     </Menu.Container>
   );
 };
