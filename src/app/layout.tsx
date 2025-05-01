@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <QueryProvider>
       <html lang="pt-br" className="*:border-red-500">
-        <body className={`antialiased`}>
+        <body className={`antialiased`} cz-shortcut-listen="true">
           {children}
           <ToastContainer theme="dark" position="top-center" />
         </body>

@@ -9,7 +9,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { publicApi } from "@/utils/api";
+import { apiPublic } from "@/utils/api";
 import { fontOpenSans, fontSaira } from "@/utils/fonts";
 import { validateCnpj } from "@/utils/validate-cnpj";
 import { validateCpf } from "@/utils/validate-cpf";
@@ -91,7 +91,7 @@ const useRegistrationForm = () => {
   const onSubmit = async (data: FormValues) => {
     console.log(data);
     try {
-      const created = await publicApi.post("/users", {
+      const created = await apiPublic.post("/users", {
         name: data.name,
         username: data.username,
         cpfCnpj: data.document,

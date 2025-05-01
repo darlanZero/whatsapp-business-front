@@ -1,75 +1,24 @@
 "use client";
 
 import { FooterPagination } from "@/components/footer-pagination";
-import { UserContext } from "@/contexts/user-context";
+import { useWhatsapp } from "@/hooks/use-whatsapp";
 import { IWhatsapp } from "@/interfaces/IWhatsapp";
-import { UserRole } from "@/interfaces/user-role";
-import { api } from "@/utils/api";
 import { fontInter, fontOpenSans, fontRoboto, fontSaira } from "@/utils/fonts";
 import { formatNumber } from "@/utils/format-number";
 import {
   StatusWhatsappLegend,
   StatusWhatsappStyle,
 } from "@/utils/status-whatsapp";
-import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
-
-type ResponseAdminWhatsapps = {
-  total: number;
-  whatsapps: IWhatsapp[];
-};
+import { motion } from "framer-motion";
 
 const limit = 10;
 const date = dayjs();
 date.locale("pt-br");
-
-const useWhatsapp = () => {
-  const { informations } = useContext(UserContext);
-  const params = useSearchParams();
-  const initialPage = Number(params?.get("page")) || 1;
-
-  const [page, setPage] = useState<number>(initialPage);
-
-  useEffect(() => {
-    setPage(initialPage);
-  }, [initialPage]);
-
-  const { data: whatsappAdmin } = useQuery<ResponseAdminWhatsapps>({
-    queryKey: ["whatsapp", "admin", page],
-
-    enabled:
-      informations?.role === UserRole.ADMIN ||
-      informations?.role === UserRole.GESTOR,
-
-    queryFn: async () =>
-      (
-        await api.get<ResponseAdminWhatsapps>(
-          `/whatsapp/list?page=${page}&limit=${limit}`
-        )
-      )?.data,
-  });
-
-  const { data: whatsappClient } = useQuery<IWhatsapp>({
-    queryKey: ["whatsapp", "client"],
-    enabled: informations?.role === UserRole.CLIENT,
-    queryFn: async () =>
-      (await api.get<IWhatsapp>("/whatsapp/instance/my-whatsapp"))?.data,
-  });
-
-  return {
-    page,
-    whatsapps: {
-      admin: whatsappAdmin,
-      client: whatsappClient,
-    },
-  };
-};
 
 export default function Whatsapp() {
   const { whatsapps, page } = useWhatsapp();
@@ -77,14 +26,14 @@ export default function Whatsapp() {
 
   if (!client && !admin?.total) {
     return (
-      <div className="w-full items-center justify-center min-h-[30rem] shadow-inner shadow-gray-600/20 flex-col flex bg-white p-6 rounded-xl">
+      <div className="w-full items-center justify-center min-h-[30rem] shadow-gray-600/20 flex-col flex p-6 rounded-xl">
         <div className="text-indigo-500/80 font-semibold text-lg">
           Você ainda não tem nenhuma instância
         </div>
 
         <Link
           href={{ query: { modal: "create" } }}
-          className="p-2 px-4 flex items-center mt-5 gap-2 transition-all rounded-lg bg-indigo-500 shadow-md hover:shadow-xl opacity-80 hover:opacity-100 shadow-indigo-500/30"
+          className="p-2 px-4 flex items-center text-indigo-100 mt-5 gap-2 transition-all rounded-lg bg-indigo-500 shadow-md hover:shadow-xl opacity-80 hover:opacity-100 shadow-indigo-500/30"
         >
           <span className={`${fontInter} font-semibold`}>Instancia</span>
           <FaPlus size={15} />
@@ -103,7 +52,7 @@ export default function Whatsapp() {
         />
         <Link
           href={{ query: { modal: "create" } }}
-          className="p-2 px-4 flex items-center gap-2 transition-all rounded-lg bg-blue-500 shadow-md hover:shadow-xl opacity-80 hover:opacity-100 shadow-blue-500/30"
+          className="p-2 px-4 flex text-indigo-100 items-center gap-2 transition-all rounded-lg bg-blue-500 shadow-md hover:shadow-xl opacity-80 hover:opacity-100 shadow-blue-500/30"
         >
           <span className={`${fontInter} font-semibold`}>Instancia</span>
           <FaPlus size={15} />
@@ -133,7 +82,8 @@ const WhatsappCard = (props: { whatsapp: IWhatsapp }) => {
   const { whatsapp } = props;
 
   return (
-    <div className="p-4 flex flex-col bg-gray-300/10 border mt-2 text-zinc-500 gap-2 rounded-lg w-full">
+    <motion.div
+     className="p-4 flex flex-col bg-gray-300/10 border mt-2 text-zinc-500 gap-2 rounded-lg w-full">
       <header className="flex items-center justify-between">
         <div>
           <h1 className={`${fontSaira} font-semibold`}>
@@ -197,6 +147,6 @@ const WhatsappCard = (props: { whatsapp: IWhatsapp }) => {
           Deletar
         </Link>
       </footer>
-    </div>
+    </motion.div>
   );
 };

@@ -3,7 +3,7 @@
 import { Modal } from "@/components/modal-base";
 import { IUser } from "@/interfaces/IUser";
 import { queryClient } from "@/providers/query-provider";
-import { api } from "@/utils/api";
+import { apiWhatsapp } from "@/utils/api";
 import { fontOpenSans, fontSaira } from "@/utils/fonts";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -29,7 +29,7 @@ interface LabelProps {
 const useEditUser = (userId: string) => {
   const { data: user } = useQuery<IUser>({
     queryKey: [`users`, userId],
-    queryFn: async () => (await api.get(`/users/${userId}`))?.data,
+    queryFn: async () => (await apiWhatsapp.get(`/users/${userId}`))?.data,
   });
 
   const form = useForm<UpdateUserSchema>({
@@ -39,7 +39,7 @@ const useEditUser = (userId: string) => {
 
   const mutation = useMutation({
     mutationFn: async (data: UpdateUserSchema) => {
-      return await api.put(`/users/${userId}`, data);
+      return await apiWhatsapp.put(`/users/${userId}`, data);
     },
 
     onSuccess: () => {
