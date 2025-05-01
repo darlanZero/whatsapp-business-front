@@ -134,11 +134,11 @@ const MenuOptionLink = ({ href, icon: Icon, label }: MenuOptionLinkProps) => {
         href={href}
         style={{ cursor: !path.startsWith(href) ? "pointer" : "default" }}
         data-selected={path.startsWith(href)}
-        className="gap-4 flex-1 hover:text-black transition-all flex items-center text-sm p-2 px-3 data-[selected=true]:border-blue-700
-        data-[selected=true]:bg-indigo-500 rounded-lg data-[selected=true]:text-blue-50 data-[selected=true]:shadow-md data-[selected=true]:shadow-indigo-500/40"
+        className="gap-4 flex-1 hover:text-black transition-all flex items-center text-sm p-1 px-3 data-[selected=true]:border-blue-700
+        data-[selected=true]:bg-indigo-500 rounded data-[selected=true]:text-blue-50 data-[selected=true]:shadow-md data-[selected=true]:shadow-indigo-500/40"
       >
-        <Icon />
-        <span>{label}</span>
+        <Icon size={16}/>
+        <span className="text-base">{label}</span>
       </Link>
     </motion.div>
   );

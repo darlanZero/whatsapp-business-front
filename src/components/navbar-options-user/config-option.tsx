@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 import { useRef } from "react";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { FaUser } from "react-icons/fa";
+import { queryClient } from "@/providers/query-provider";
+import { TOKEN_KEY } from "@/utils/cookies-keys";
 
 interface NavBarUserConfigOptionProps {
   close: () => void;
@@ -26,7 +28,9 @@ export const NavbarUserConfigOption = (props: NavBarUserConfigOptionProps) => {
   useClickOutside(ref, close);
 
   const logout = () => {
-    Cookies.remove("token");
+    Cookies.remove(TOKEN_KEY);
+
+    queryClient.clear();
 
     toast(<LogoutToast />, {
       hideProgressBar: true,

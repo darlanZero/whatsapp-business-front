@@ -1,6 +1,6 @@
 import { Modal } from "@/components/modal-base";
 import { queryClient } from "@/providers/query-provider";
-import { api } from "@/utils/api";
+import { apiAuth } from "@/utils/api";
 import { fontInter } from "@/utils/fonts";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
@@ -12,7 +12,7 @@ const useModalDelete = () => {
 
   const instanceDelete = useMutation({
     mutationFn: async (nameInstance: string) => {
-      await api.post(`/whatsapp/instance/delete/${nameInstance}`);
+      await apiAuth.post(`/whatsapp/instance/delete/${nameInstance}`);
     },
     onSuccess: () => {
       toast.success("Whatsapp deletado com sucesso!");

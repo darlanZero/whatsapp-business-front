@@ -50,7 +50,7 @@ export const Navbar = () => {
 
           {informations?.email && (
             <div className={`${fontInter} text-gray-500 text-right flex flex-col text-sm -space-y-1`}>
-              <span className="text-base">{informations?.nome}</span>
+              <span className="text-base">{informations?.name}</span>
               
               {informations?.role === UserRole.ADMIN && (
                 <span className={`text-xs`}>

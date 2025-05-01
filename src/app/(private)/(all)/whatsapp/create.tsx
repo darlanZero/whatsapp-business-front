@@ -1,7 +1,7 @@
 import PhoneInput from "@/components/input-number";
 import { Modal } from "@/components/modal-base";
 import { queryClient } from "@/providers/query-provider";
-import { api } from "@/utils/api";
+import { apiAuth } from "@/utils/api";
 import { fontSaira } from "@/utils/fonts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -30,15 +30,19 @@ const useCreateWhatsapp = () => {
 
   const handleCreate = useMutation({
     mutationFn: async (data: CreateWhatsappSchemaProps) => {
-      const response = await api.post("/whatsapp/instance", {
-        integration: "WHATSAPP-BAILEYS",
-        phoneNumber: data.phone,
-        instanceName: data.name,
-        number: data.phone,
-        qrcode: true,
-      });
+      try {
+        const response = await apiAuth.post("/whatsapp/instance", {
+          integration: "WHATSAPP-BAILEYS",
+          phoneNumber: data.phone,
+          instanceName: data.name,
+          number: data.phone,
+          qrcode: true,
+        });
 
-      console.log(response);
+        console.log(response);
+      } catch (err) {
+        console.log(err);
+      }
     },
 
     onSuccess: async () => {

@@ -6,15 +6,15 @@ export interface IMessageCount {
   Chat: number;
 }
 
-export interface IWhatsappClient {
+export interface IWhatsappEvolution {
   connectionStatus: StatusWhatsapp;
-  createdAt: string; // ou Date se for converter
-  disconnectionAt: string | null; // ou Date | null
+  createdAt: string;
+  disconnectionAt: string | null;
   id: string;
   name: string;
   number: string;
   profileName: string;
   profilePicUrl: string;
-  updatedAt: string; // ou Date
+  updatedAt: string;
   _count: IMessageCount;
 }

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { UserContext } from "@/contexts/user-context";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
+import { TOKEN_KEY } from "@/utils/cookies-keys";
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -17,7 +18,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    const token = Cookies.get("token");
+    const token = Cookies.get(TOKEN_KEY);
 
     if (token) {
       const decoded = jwtDecode<JWT_DECODED_DATA>(token);

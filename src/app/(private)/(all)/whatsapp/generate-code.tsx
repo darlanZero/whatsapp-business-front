@@ -2,7 +2,7 @@ import { Loader } from "@/components/loader";
 import { Modal } from "@/components/modal-base";
 import { QRCodeDecoder } from "@/components/qr-decoder";
 import { queryClient } from "@/providers/query-provider";
-import { api } from "@/utils/api";
+import { apiAuth } from "@/utils/api";
 import { fontSaira } from "@/utils/fonts";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
@@ -23,7 +23,7 @@ const useGenerateQrCore = (props: useGenerateQrCoreProps) => {
     enabled: !!props.name && !!props.number,
     queryFn: async () => {
       const url = `/whatsapp/instance/connect/${props.name}?phoneNumber=${props.number}`;
-      return (await api.get<GetQrCode>(url))?.data;
+      return (await apiAuth.get<GetQrCode>(url))?.data;
     },
   });
 

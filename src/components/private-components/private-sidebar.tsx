@@ -4,14 +4,14 @@ import { Button } from "@/components/ui/button";
 import { UserContext } from "@/contexts/user-context";
 import { UserRole } from "@/interfaces/user-role";
 import { Home, MessageCircle } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { useContext, useState } from "react";
-import { TbBrandCampaignmonitor } from "react-icons/tb";
 import { Menu } from "../menu-section";
 import { AdminPages } from "./admin-pages";
+import { CampainPage } from "./campain-pages";
 import { ConfigurationPage } from "./configuration-pages";
 import { SaveContacts } from "./save-contacts";
 import { SidebarSkeleton } from "./sidebar-skeleton";
-import { usePathname, useRouter } from "next/navigation";
 
 const HeaderSidebar = () => (
   <div className="p-4">
@@ -52,9 +52,7 @@ const SidebarButtons = () => {
 
       <SaveContacts />
 
-      <Menu.Container>
-        <Menu.Trigger icon={TbBrandCampaignmonitor} label="Configurar Camp." />
-      </Menu.Container>
+      <CampainPage />
 
       <Menu.Container>
         <Menu.Trigger icon={MessageCircle} label="Chatbot" />

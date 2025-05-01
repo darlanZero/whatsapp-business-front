@@ -1,7 +1,7 @@
 "use client";
 
 import { IUser } from "@/interfaces/IUser";
-import { api } from "@/utils/api";
+import { apiWhatsapp } from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
@@ -12,7 +12,7 @@ interface ResponseGetAllUsers {
 
 export const useGetAllUsers = (initialPage?: number | null) => {
   const [page, setPage] = useState(initialPage || 1);
-  const limit = 1;
+  const limit = 20;
 
   useEffect(() => {
     const currentPage = initialPage || 1;
@@ -22,7 +22,7 @@ export const useGetAllUsers = (initialPage?: number | null) => {
   const { data, isLoading } = useQuery<ResponseGetAllUsers>({
     queryKey: ["users", page],
     queryFn: async () =>
-      (await api.get(`/admin/users?page=${page}&limit=${limit}`))?.data,
+      (await apiWhatsapp.get(`/admin/users?page=${page}&limit=${limit}`))?.data,
   });
 
   return { data, isLoading, limit };

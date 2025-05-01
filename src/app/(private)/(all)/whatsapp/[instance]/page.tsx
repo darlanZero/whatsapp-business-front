@@ -1,7 +1,7 @@
 "use client";
 
-import { IWhatsappClient } from "@/interfaces/IWhatsappClient";
-import { api } from "@/utils/api";
+import { IWhatsappEvolution } from "@/interfaces/IWhatsappClient";
+import { apiAuth } from "@/utils/api";
 import { fontInter, fontSaira } from "@/utils/fonts";
 import { formatNumber } from "@/utils/format-number";
 import {
@@ -19,16 +19,16 @@ import { toast } from "react-toastify";
 const useEditWhatsapp = () => {
   const params = useParams();
 
-  const { data, isLoading } = useQuery<IWhatsappClient>({
+  const { data, isLoading } = useQuery<IWhatsappEvolution>({
     enabled: !!params?.instance,
     queryKey: ["whatsapp", "instance", params.instance],
     queryFn: async () =>
-      (await api.get(`/whatsapp/instance/fetch/${params.instance}`))?.data,
+      (await apiAuth.get(`/whatsapp/instance/fetch/${params.instance}`))?.data,
   });
 
   const restart = useMutation({
     mutationFn: async (name: string) => {
-      const response = await api.post(`/whatsapp/instance/restart/${name}`);
+      const response = await apiAuth.post(`/whatsapp/instance/restart/${name}`);
       console.log(response);
     },
 
@@ -90,7 +90,7 @@ export default function EditWhatsapp() {
               <div
                 className={`${fontInter} flex flex-col items-center font-semibold text-gray-600`}
               >
-                {formatNumber("5583988032789")}
+                {formatNumber(data?.number)}
               </div>
             </div>
           </section>
