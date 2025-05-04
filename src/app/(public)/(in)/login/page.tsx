@@ -33,7 +33,8 @@ const useLoginPage = () => {
       });
 
       if (!token) {
-        throw new Error();
+        toast.error("Email ou senha incorretos!");
+        return;
       }
 
       Cookies.set(TOKEN_KEY, token);

@@ -27,8 +27,11 @@ export const NavbarUserConfigOption = (props: NavBarUserConfigOptionProps) => {
 
   useClickOutside(ref, close);
 
-  const logout = () => {
-    Cookies.remove(TOKEN_KEY);
+  const logout = async () => {
+    const cookies = Cookies.get();
+    Object.keys(cookies)?.forEach((cookieName) => {
+      Cookies.remove(cookieName, { path: "/" });
+    });
 
     queryClient.clear();
 
@@ -36,7 +39,7 @@ export const NavbarUserConfigOption = (props: NavBarUserConfigOptionProps) => {
       hideProgressBar: true,
     });
 
-    router.push("/login");
+    window.location.href = '/login';
   };
 
   return (

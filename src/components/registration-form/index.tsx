@@ -26,6 +26,7 @@ import { toast } from "react-toastify";
 import * as z from "zod";
 import FormInput from "../form-input";
 import PhoneInput from "../input-number";
+import { AxiosError } from "axios";
 
 const formSchema = z.object({
   username: z.string().min(1, { message: "Username é obrigatório" }),
@@ -82,6 +83,12 @@ const useRegistrationForm = () => {
     setStep((prev) => prev + 1);
   };
 
+  const backStep = () => {
+    if (step === 1) {
+      setStep(0);
+    }
+  };
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
@@ -107,20 +114,30 @@ const useRegistrationForm = () => {
       }
     } catch (err: unknown) {
       console.log(err);
-      toast.error("Houve um erro ao tentar criar conta!");
+
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data?.message, {
+          hideProgressBar: true,
+        });
+      } else {
+        toast.error(
+          "Houve um erro desconhecido, entre em contato com o suporte!"
+        );
+      }
     }
   };
 
   return {
     form,
     step,
+    backStep,
     nextStep,
     onSubmit,
   };
 };
 
 const RegistrationForm = () => {
-  const { form, onSubmit, step, nextStep } = useRegistrationForm();
+  const { form, onSubmit, step, backStep, nextStep } = useRegistrationForm();
 
   return (
     <div className="w-full max-w-md p-10 px-12 glassmorphism rounded-xl bg-white/20 backdrop-blur-lg shadow shadow-zinc-900 border border-zinc-100/20">
@@ -191,7 +208,11 @@ const RegistrationForm = () => {
 
           {step === 1 && (
             <>
-              <button className="w-10 h-10 bg-blue-100/80 rounded-full text-zinc-700 grid place-items-center">
+              <button
+                type="button"
+                onClick={backStep}
+                className="w-10 h-10 bg-blue-100/80 rounded-full text-zinc-700 grid place-items-center"
+              >
                 <FaArrowLeftLong />
               </button>
 
