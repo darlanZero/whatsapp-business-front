@@ -1,5 +1,8 @@
 export function formatNumber(phoneNumber: string): string {
-  const cleaned = phoneNumber?.replace(/\D/g, "");
+
+
+
+  const cleaned = phoneNumber?.toString().replace(/\D/g, "");
 
   if (cleaned?.startsWith("55") && cleaned?.length === 13) {
     const countryCode = cleaned.slice(0, 2);

@@ -14,10 +14,17 @@ import { IList } from "@/interfaces/IList";
 import { apiWhatsapp } from "@/utils/api";
 import { DeleteListModal } from "./delete-modal";
 
+interface IListContactResponse {
+  list: IList;
+  _count: {
+    contacts: number;
+  };
+}
+
 export default function Lists() {
   const router = useRouter();
 
-  const { data: lists = [], isLoading } = useQuery<IList[]>({
+  const { data: lists = [], isLoading } = useQuery<IListContactResponse[]>({
     queryKey: ["lists"],
     queryFn: async () => {
       return (await apiWhatsapp.get("/lists-contacts"))?.data;
@@ -31,8 +38,6 @@ export default function Lists() {
   const handlerViewDetails = (id: number) => {
     router.push(`?modal=details&id=${id}`);
   };
-
-
 
   return (
     <ModalLayout
@@ -67,12 +72,13 @@ export default function Lists() {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            {lists.map((list: IList) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-5 2xl:grid-cols-5 gap-6">
+            {lists.map(({ list, _count }: IListContactResponse) => (
               <ListCard
                 key={list.id}
                 id={list.id}
                 title={list.name}
+                count={_count}
                 onPopulate={() => handlePopulateList(list.id)}
                 onViewDetails={() => handlerViewDetails(list.id)}
               />

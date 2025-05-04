@@ -19,7 +19,7 @@ const ModalContainer = (props: HTMLMotionProps<"div">) => {
   const { className, ...rest } = props;
 
   const style = twMerge(
-    "flex fixed top-0 w-full left-0 h-screen z-40 bg-blue-900/5 backdrop-blur-[1px] text-zinc-500 overflow-auto p-3",
+    "flex fixed top-0 w-full left-0 h-screen z-40 bg-blue-900/10 text-zinc-500 overflow-auto p-3",
     className
   );
 
@@ -31,6 +31,7 @@ const ModalContainer = (props: HTMLMotionProps<"div">) => {
       initial="initial"
       transition={{ duration: 0.1 }}
       animate="animate"
+      style={{ perspective: "1000px" }}
       exit="exit"
     >
       {props.children}
@@ -41,18 +42,18 @@ const ModalContainer = (props: HTMLMotionProps<"div">) => {
 export const ModalForm = (props: ModalFormProps) => {
   const { className, children, ...rest } = props;
   const classStyle = twMerge(
-    "flex flex-col m-auto bg-white border rounded-md w-full max-w-[30rem]",
+    "flex flex-col m-auto bg-white border border-indigo-50 rounded-md w-full max-w-[30rem] will-change-transform",
     className
   );
 
   return (
     <motion.form
-      initial={{ scaleY: 0.4, opacity: 0, filter: "blur(20px)" }}
-      animate={{ scaleY: 1, opacity: 1, filter: "blur(0px)" }}
-      exit={{ scaleY: 0.4, opacity: 0, filter: "blur(20px)" }}
+      initial={{ scale: 0.8, rotateY: 10, opacity: 0.8 }}
+      animate={{ scale: 1, opacity: 1, rotateY: 0 }}
+      exit={{ scale: 0.8, rotateY: 10, opacity: 0.6 }}
       transition={{
-        duration: 0.2,
-        type: "spring",
+        duration: 0.1,
+        type: "tween",
         filter: { duration: 0.1 },
       }}
       {...rest}
@@ -72,8 +73,11 @@ const ModalHeader = (
   return (
     <header className={classStyle} {...rest}>
       <h1 className={`${fontOpenSans}`}>{title}</h1>
-      <Link href="?" className="w-8 h-8 hover:bg-zinc-100 grid place-items-center rounded-lg">
-        <IoClose size={20}/>
+      <Link
+        href="?"
+        className="w-8 h-8 hover:bg-zinc-100 grid place-items-center rounded-lg"
+      >
+        <IoClose size={20} />
       </Link>
     </header>
   );

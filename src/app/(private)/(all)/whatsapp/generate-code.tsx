@@ -60,7 +60,7 @@ export const GenerateQrCode = () => {
         >
           Scaneia o QR Code para conectar seu whatsapp
         </h2>
-        {data?.base64 && <QRCodeDecoder base64={data?.base64} />}
+        {data?.base64 && <QRCodeDecoder  base64={data?.base64} />}
 
         {!data?.base64 && (
           <div className="relative mb-10">

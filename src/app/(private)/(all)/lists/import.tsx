@@ -1,19 +1,21 @@
 "use client";
 
+import { CreateContact } from "@/components/create-list-contact/create-manual";
 import { Modal } from "@/components/modal-base";
+import { SimpleLoader } from "@/components/simple-loader";
+import { apiWhatsapp } from "@/utils/api";
 import { fontSaira } from "@/utils/fonts";
+import { useMutation } from "@tanstack/react-query";
+import { useAtom } from "jotai";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { IoClose } from "react-icons/io5";
+import { toast } from "react-toastify";
+import { contactsAtoms } from "./atom";
 import { ImportCSV } from "./import-contacts-file";
 import { ImportWhatsapp } from "./import-contacts-whatsapp";
-import { useMutation } from "@tanstack/react-query";
-import { apiWhatsapp } from "@/utils/api";
-import { useAtom } from "jotai";
-import { contactsAtoms } from "./atom";
-import { useSearchParams } from "next/navigation";
-import { toast } from "react-toastify";
-import { CreateContact } from "@/components/create-list-contact/create-manual";
-import { SimpleLoader } from "@/components/simple-loader";
-import { formatNumber } from "@/utils/format-number";
+import { queryClient } from "@/providers/query-provider";
+import { AxiosError } from "axios";
 
 type Option = "whatsapp" | ".csv" | "manual";
 
@@ -21,6 +23,7 @@ const useImportsContacts = () => {
   const [contacts, setContacts] = useAtom(contactsAtoms);
   const params = useSearchParams();
   const listId = params?.get("id");
+  const router = useRouter();
 
   const handleSubmit = useMutation({
     mutationFn: async () => {
@@ -34,47 +37,41 @@ const useImportsContacts = () => {
 
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       setContacts([]);
+
+      await queryClient.invalidateQueries({
+        queryKey: ["lists"],
+      });
+
       toast.success(
         <div className="p-2">
-          <p className="font-semibold">{contacts.length} contatos importados com sucesso!</p>
+          <p className="font-semibold">Começado a importação</p>
           <p className="text-sm">A lista foi atualizada.</p>
         </div>,
         { autoClose: 2500 }
       );
+
+      router.push("?");
     },
-    onError: (err: Error) => {
-      toast.error(err?.message || "Houve um erro ao importar os contatos!");
+    onError: (err: AxiosError<{ message: string }>) => {
+      toast.error(
+        err?.response?.data?.message || "Houve um erro ao importar os contatos!"
+      );
     },
   });
 
   return { handleSubmit };
 };
 
-const ContactItem = ({ name, phoneNumber }: { name: string; phoneNumber: string }) => {
-  const formattedPhone = formatNumber(phoneNumber);
-
-  return (
-    <div className="flex justify-between p-2 even:bg-blue-50 items-center">
-      <span className="truncate max-w-[120px] sm:max-w-[180px]">{name}</span>
-      <span className="text-gray-600 text-sm">{formattedPhone}</span>
-    </div>
-  );
-};
-
 export const ImportContacts = () => {
+  const [contacts, setContacts] = useAtom(contactsAtoms);
   const [openOptions, setOpenOption] = useState<Option>("whatsapp");
   const { handleSubmit } = useImportsContacts();
-  const [contacts] = useAtom(contactsAtoms);
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleImport = () => {
-    if (contacts.length > 10) {
-      setShowConfirm(true);
-    } else {
-      handleSubmit.mutate();
-    }
+    handleSubmit.mutate();
   };
 
   return (
@@ -124,20 +121,46 @@ export const ImportContacts = () => {
         {openOptions === "manual" && <CreateContact />}
 
         <section className="mt-4 max-h-60 sm:max-h-40 overflow-y-auto border rounded-lg">
-          <h3 className={`${fontSaira} font-semibold p-2 bg-gray-50 text-gray-800 border-b text-sm sm:text-base`}>
+          <h3
+            className={`${fontSaira} font-semibold p-2 bg-gray-50 text-gray-800 border-b text-sm sm:text-base`}
+          >
             Contatos a serem importados: {contacts.length}
           </h3>
-          <div className="divide-y text-gray-700">
-            {contacts.length > 0 ? (
-              contacts.map((contact, index) => (
-                <ContactItem
+          <div className="flex flex-wrap text-gray-700 gap-3 p-3">
+            {contacts?.map((contact, index) => {
+              return (
+                <div
                   key={index}
-                  name={contact.name}
-                  phoneNumber={contact.phoneNumber}
-                />
-              ))
-            ) : (
-              <p className="text-gray-700 text-center p-4 text-sm sm:text-base">Nenhum contato adicionado ainda</p>
+                  className="flex p-2 text-gray-500 items-center bg-white border border-zinc-200 opacity-80 hover:opacity-100 rounded-lg"
+                >
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setContacts((prev) => {
+                        return [
+                          ...prev.filter(
+                            (data) => data.phoneNumber !== contact?.phoneNumber
+                          ),
+                        ];
+                      })
+                    }
+                    className="w-6 h-6 bg-gray-100 grid place-items-center rounded-full"
+                  >
+                    <IoClose size={20} />
+                  </button>
+
+                  <span className="font-semibold px-2">{contact?.name}</span>
+                  <span className="font-semibold text-sm border-l-2 px-2">
+                    {contact?.phoneNumber}
+                  </span>
+                </div>
+              );
+            })}
+
+            {!contacts?.length && (
+              <p className="text-gray-700 text-center p-4 text-sm sm:text-base">
+                Nenhum contato adicionado ainda
+              </p>
             )}
           </div>
         </section>
@@ -147,19 +170,22 @@ export const ImportContacts = () => {
             id="import-button"
             type="button"
             onClick={handleImport}
+            data-loading={handleSubmit.isPending}
             disabled={contacts.length === 0 || handleSubmit.isPending}
             className={`p-3 px-4 sm:px-6 rounded-lg transition-all flex items-center gap-2 ${fontSaira} font-medium
-                            ${contacts.length > 0 && !handleSubmit.isPending
-                ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow hover:shadow-md"
-                : "bg-gray-200 text-gray-500 cursor-not-allowed"}`}
+            bg-indigo-500 text-white`}
           >
-            {handleSubmit.isPending ? (
-              <> 
+            {handleSubmit.isPending && (
+              <>
                 <SimpleLoader className="w-5 h-5" />
                 <span className="text-sm sm:text-base">Importando...</span>
               </>
-            ) : (
-              <span className="text-sm sm:text-base">Importar {contacts.length > 0 ? `(${contacts.length})` : ''}</span>
+            )}
+
+            {!handleSubmit.isPending && (
+              <span className="text-sm sm:text-base">
+                Importar {contacts.length > 0 ? `(${contacts.length})` : ""}
+              </span>
             )}
           </button>
         </footer>
@@ -167,10 +193,14 @@ export const ImportContacts = () => {
         {showConfirm && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-white p-4 sm:p-6 rounded-lg max-w-full sm:max-w-md w-full">
-              <h3 className={`${fontSaira} font-semibold text-base sm:text-lg mb-3 sm:mb-4`}>Confirmar Importação</h3>
+              <h3
+                className={`${fontSaira} font-semibold text-base sm:text-lg mb-3 sm:mb-4`}
+              >
+                Confirmar Importação
+              </h3>
               <p className="mb-3 sm:mb-4 text-sm sm:text-base">
-                Você está prestes a importar <strong>{contacts.length} contatos</strong>.
-                Deseja continuar?
+                Você está prestes a importar{" "}
+                <strong>{contacts.length} contatos</strong>. Deseja continuar?
               </p>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-end">
                 <button
