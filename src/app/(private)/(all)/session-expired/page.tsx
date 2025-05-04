@@ -1,15 +1,17 @@
 "use client";
 
-import { TOKEN_KEY } from "@/utils/cookies-keys";
 import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
 
 export default function SessionExpiredPage() {
-  const router = useRouter();
-
   const logout = () => {
-    Cookies.remove(TOKEN_KEY);
-    router.replace("/login");
+    const cookies = Cookies.get(); 
+
+    console.log(cookies)
+    Object.keys(cookies)?.forEach((cookieName) => {
+      Cookies.remove(cookieName); // Remove cada cookie
+    });
+
+    window.location.href = '/login';
   };
 
   return (
