@@ -1,67 +1,71 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { fontInter, fontSaira } from "@/utils/fonts";
+import { Card } from "@/components/ui/card";
+import { fontInter, fontOpenSans, fontSaira } from "@/utils/fonts";
 import { Eye, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CiImport } from "react-icons/ci";
 import { IoMdContact } from "react-icons/io";
 
-// Definição da interface no mesmo arquivo
 type ListCardProps = {
   id: number;
   title: string;
+  count: { contacts: number };
   onPopulate?: () => void;
   onViewDetails?: () => void;
 };
 
-const ListCard = ({ id, title, onPopulate, onViewDetails }: ListCardProps) => {
+const ListCard = ({
+  id,
+  count,
+  title,
+  onPopulate,
+  onViewDetails,
+}: ListCardProps) => {
   const router = useRouter();
 
-    const handlerDelete = () => {
-        router.push(`?modal=delete&listId=${id}`);
-      };
-
   return (
-    <Card className="w-full bg-white p-4 sm:p-6 flex flex-col transition-all hover:shadow-xl hover:-translate-y-0.5">
-      <div className="flex justify-end mb-2">
+    <Card className="w-full bg-white p-6 gap-2 flex flex-col transition-all hover:shadow-xl hover:translate-y-[-2px]">
+      <div className="flex justify-between">
+        <div className="font-semibold gap-0.5 items-center justify-center flex text-gray-500">
+          <IoMdContact />
+          <span>{count?.contacts}</span>
+        </div>
         <Button
           size="sm"
           variant="ghost"
           onClick={onViewDetails}
-          className={`${fontInter} text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 flex items-center gap-1`}
+          className={`${fontOpenSans} text-indigo-900 hover:text-indigo-950 hover:bg-indigo-50 flex items-center gap-1`}
         >
           <Eye className="h-4 w-4" />
           <span>Ver Detalhes</span>
         </Button>
       </div>
-
-      <div className="flex-1 flex flex-col justify-between space-y-4">
-        <div className="p-2 sm:p-3 bg-blue-50/70 rounded-xl">
+      <div className="flex-1 flex flex-col gap-3 justify-between">
+        <div className="p-3 bg-blue-50/70 rounded-xl">
           <h2
-            className={`${fontSaira} text-xl sm:text-2xl font-semibold text-center text-gray-900 line-clamp-2`}
+            className={`${fontSaira} text-2xl font-semibold text-center text-gray-900 line-clamp-2`}
           >
             {title}
           </h2>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
-          <Button
+        <div className="flex gap-3 justify-between">
+          <button
             onClick={onPopulate}
-            className={`${fontInter} bg-indigo-700 hover:bg-indigo-900 text-white w-full sm:w-auto`}
+            className={`${fontSaira} bg-gradient-to-br from-indigo-50 to-purple-50 hover:from-indigo-100 hover:shadow-inner shadow-indigo-500/10 transition-all flex gap-2 items-center text-indigo-900 p-1 rounded-xl px-5`}
           >
-            Popular
-          </Button>
+            <CiImport size={20} />
+            <span>Popular</span>
+          </button>
 
-          <Button
-            variant="destructive"
-            className={`${fontInter} bg-red-600 hover:bg-red-700 flex items-center gap-1 w-full sm:w-auto`}
-            onClick={handlerDelete}
+          <button
+            onClick={() => router.push(`?modal=delete&listId=${id}`)}
+            className={`${fontInter} grid items-center hover:bg-gray-100 w-10 h-10 bg-gray-50 rounded-xl place-items-center gap-1`}
           >
             <Trash2 className="h-4 w-4" />
-            Excluir
-          </Button>
+          </button>
         </div>
       </div>
     </Card>

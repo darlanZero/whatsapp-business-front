@@ -28,6 +28,7 @@ const parseNDJSON = () => {
   let ndjsonBuffer = "";
   return new TransformStream({
     transform(chunk, controller) {
+      console.log(chunk);
       ndjsonBuffer += chunk;
       const items = ndjsonBuffer.split("\n");
       items
@@ -75,11 +76,19 @@ const useFileState = () => {
   const [file, setFile] = useState<File | null>(null);
 
   const handleFile = (selectedFile: File | undefined) => {
-    if (selectedFile && selectedFile.type === "text/csv") {
+    if (
+      selectedFile &&
+      (
+        selectedFile.type === "text/csv" ||
+        selectedFile.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        selectedFile.type === "application/vnd.ms-excel"
+      )
+    ) {
       setFileName(selectedFile.name);
       setFile(selectedFile);
     }
   };
+  
 
   return { fileName, file, handleFile };
 };

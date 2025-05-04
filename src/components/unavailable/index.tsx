@@ -3,7 +3,7 @@ import { TbTools } from "react-icons/tb";
 
 export default function Unavailable() {
   return (
-    <div className="flex w-full h-screen select-none">
+    <div className="flex w-full flex-1 py-20 select-none">
       <div className="flex m-auto text-gray-500 items-center justify-center flex-col gap-4">
         <TbTools size={50} />
 

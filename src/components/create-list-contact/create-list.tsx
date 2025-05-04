@@ -1,27 +1,24 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { IList } from "@/interfaces/IList";
 import { apiWhatsapp } from "@/utils/api";
 import { fontInter } from "@/utils/fonts";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { SimpleLoader } from "../simple-loader";
 
 const useCreateList = () => {
   const router = useRouter();
   const qc = useQueryClient();
 
-  const { data: formState } = useQuery({
-    queryKey: ["formState"],
-    queryFn: () => ({ listName: "" }),
-    initialData: { listName: "" },
-  });
+  const [formState, setFormState] = useState({ listName: "" });
 
   const handleListNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    qc.setQueryData(["formState"], {
-      ...formState!,
-      listName: e.target.value,
+    e.preventDefault();
+
+    setFormState({
+      listName: e.target.value || "",
     });
   };
 
@@ -33,9 +30,10 @@ const useCreateList = () => {
 
       return response.data; // Retornar os dados para que sejam disponibilizados no onSuccess
     },
-    onSuccess: (newList: IList) => {
-      qc.setQueryData(["lists"], (prev: IList[] = []) => [...prev, newList]);
-      qc.setQueryData(["formState"], { listName: "" });
+    onSuccess: (  ) => {
+      qc.invalidateQueries({
+        queryKey: ["lists"],
+      });
 
       router.push("?");
     },

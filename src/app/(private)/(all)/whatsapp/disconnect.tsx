@@ -1,6 +1,6 @@
 import { Modal } from "@/components/modal-base";
 import { queryClient } from "@/providers/query-provider";
-import { apiWhatsapp } from "@/utils/api";
+import { apiAuth } from "@/utils/api";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
@@ -10,7 +10,7 @@ const useDisconnect = () => {
 
   const logout = useMutation({
     mutationFn: async (name: string) => {
-      const response = await apiWhatsapp.post(`whatsapp/instance/logout/${name}`);
+      const response = await apiAuth.post(`whatsapp/instance/logout/${name}`);
       console.log(response);
     },
 
