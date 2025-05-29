@@ -1,19 +1,17 @@
-// import { DetailsList } from "@/components/create-list-contact/details-list";
+import { DetailsList } from "@/components/create-list-contact/details-list";
 import { Modal } from "@/components/modal-base";
-import Unavailable from "@/components/unavailable";
 import { fontSaira } from "@/utils/fonts";
 
 export const DetailsListModal = () => {
   return (
-    <Modal.container>
-      <Modal.form className="rounded-xl">
+    <Modal.container className="bg-blue-900/20">
+      <Modal.box className="rounded-3xl max-w-[80rem] shadow overflow-hidden">
         <Modal.header
           title="Detalhes da Lista"
           className={`${fontSaira} text-gray-800 font-bold p-4 `}
         />
-        <Unavailable/>
-        {/* <DetailsList /> */}
-      </Modal.form>
+        <DetailsList />
+      </Modal.box>
     </Modal.container>
   );
 };

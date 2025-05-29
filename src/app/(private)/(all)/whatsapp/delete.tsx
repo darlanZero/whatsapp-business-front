@@ -6,33 +6,83 @@ import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
+import { TOKEN_WHATSAPP_KEY } from "@/utils/cookies-keys";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+import { AxiosError } from "axios";
 
 const useModalDelete = () => {
   const router = useRouter();
+  const params = useSearchParams();
+  const instance = params.get("instance");
 
   const instanceDelete = useMutation({
     mutationFn: async (nameInstance: string) => {
-      await apiAuth.post(`/whatsapp/instance/delete/${nameInstance}`);
+      const whatsappToken = Cookies.get(TOKEN_WHATSAPP_KEY);
+      let redirectToSession = false;
+
+      if (whatsappToken) {
+        const decoded = jwtDecode<JwtPayload & { instanceName: string }>(
+          whatsappToken
+        );
+
+        if (decoded?.instanceName === nameInstance) {
+          const shouldDelete = window.confirm(
+            "Deseja mesmo deletar, você terá que realizar novamente o login com a sessão do whatsapp."
+          );
+
+          if (!shouldDelete) {
+            throw new Error("ACTION_CANCELLED");
+          }
+
+          redirectToSession = true;
+        }
+      }
+
+      const response = await apiAuth.post(
+        `/whatsapp/instance/delete/${nameInstance}`
+      );
+
+      // Retornamos um objeto com os dados e a flag de redirecionamento
+      return {
+        data: response.data,
+        redirectToSession,
+      };
     },
-    onSuccess: () => {
+
+    onSuccess: async (result) => {
       toast.success("Whatsapp deletado com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["whatsapp"] });
-      router.push("?");
+      await queryClient.invalidateQueries({ queryKey: ["whatsapp"] });
+
+      if (result.redirectToSession) {
+        router.push("/session-whatsapp");
+      } else {
+        router.push("/whatsapp");
+      }
     },
-    onError: () => {
-      toast.error("Não foi possível deletar a instancia");
+
+    onError: (error: Error) => {
+      if (error.message !== "ACTION_CANCELLED") {
+        if (error instanceof AxiosError) {
+          toast.error(
+            error.response?.data?.message ||
+              "Não foi possível deletar a instancia"
+          );
+        } else {
+          toast.error("Não foi possível deletar a instancia");
+        }
+      }
     },
   });
 
   return {
     instanceDelete,
+    instance,
   };
 };
 
 export const ModalDelete = () => {
-  const { instanceDelete } = useModalDelete();
-  const params = useSearchParams();
-  const instance = params.get("instance");
+  const { instanceDelete, instance } = useModalDelete();
 
   return (
     <Modal.container>
@@ -55,7 +105,7 @@ export const ModalDelete = () => {
           <button
             type="button"
             className={`${fontInter} bg-red-500 opacity-80 hover:opacity-100 p-2 text-red-100 rounded-lg transition-all font-semibold`}
-            onClick={() => {
+            onClick={async () => {
               if (instance) {
                 instanceDelete.mutate(instance);
               }

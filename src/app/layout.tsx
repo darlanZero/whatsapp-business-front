@@ -15,10 +15,14 @@ export default function RootLayout({
 }>) {
   return (
     <QueryProvider>
-      <html lang="pt-br" className="*:border-red-500">
+      <html lang="pt-BR" className="*:border-red-500">
         <body className={`antialiased`} cz-shortcut-listen="true">
           {children}
-          <ToastContainer theme="dark" position="top-center" />
+          <ToastContainer
+            style={{ zIndex: 9999 }}
+            theme="dark"
+            position="top-left"
+          />
         </body>
       </html>
     </QueryProvider>

@@ -10,8 +10,8 @@ import { Menu } from "../menu-section";
 import { AdminPages } from "./admin-pages";
 import { CampainPage } from "./campain-pages";
 import { ConfigurationPage } from "./configuration-pages";
-import { SaveContacts } from "./save-contacts";
 import { SidebarSkeleton } from "./sidebar-skeleton";
+import { FaChevronRight } from "react-icons/fa";
 
 const HeaderSidebar = () => (
   <div className="p-4">
@@ -49,8 +49,6 @@ const SidebarButtons = () => {
           label="Dashboard"
         />
       </Menu.Container>
-
-      <SaveContacts />
 
       <CampainPage />
 
@@ -110,31 +108,13 @@ export const Sidebar = () => {
 
   return (
     <>
-      <div className="md:hidden p-4">
-        <Button
-          variant="default"
+      <div className="md:hidden fixed z-30 top-[10vh] left-0">
+        <button
           onClick={toggleMobileSidebar}
-          className="bg-transparent text-black"
+          className="bg-indigo-600 w-10 h-10 shadow-md text-white grid place-items-center rounded-r-xl"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d={
-                isMobileSidebarOpen
-                  ? "M6 18L18 6M6 6l12 12"
-                  : "M4 6h16M4 12h16M4 18h16"
-              }
-            />
-          </svg>
-        </Button>
+          <FaChevronRight />
+        </button>
       </div>
 
       <div

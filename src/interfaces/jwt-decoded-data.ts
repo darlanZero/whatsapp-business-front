@@ -7,3 +7,7 @@ export interface JWT_DECODED_DATA {
 	username: string;
 	role: string;
 }
+
+export interface JWT_DECODED_DATA_WHATSAPP {
+	instanceName: string;
+}

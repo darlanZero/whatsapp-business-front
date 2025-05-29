@@ -2,32 +2,30 @@
 
 import { CreateContact } from "@/components/create-list-contact/create-manual";
 import { Modal } from "@/components/modal-base";
-import { SimpleLoader } from "@/components/simple-loader";
+import { useImportByLabel, useWhatsappLabels } from "@/hooks/use-labels";
+import { queryClient } from "@/providers/query-provider";
 import { apiWhatsapp } from "@/utils/api";
 import { fontSaira } from "@/utils/fonts";
 import { useMutation } from "@tanstack/react-query";
-import { useAtom } from "jotai";
+import { AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { IoClose } from "react-icons/io5";
 import { toast } from "react-toastify";
-import { contactsAtoms } from "./atom";
-import { ImportCSV } from "./import-contacts-file";
+import { IWhatsappToCreate } from "./atom";
+import { ImportByFile } from "./import-contacts-file";
 import { ImportWhatsapp } from "./import-contacts-whatsapp";
-import { queryClient } from "@/providers/query-provider";
-import { AxiosError } from "axios";
 
-type Option = "whatsapp" | ".csv" | "manual";
+type Option = "whatsapp" | "file" | "manual" | "etiquetas";
 
-const useImportsContacts = () => {
-  const [contacts, setContacts] = useAtom(contactsAtoms);
+export const useImportsContacts = () => {
   const params = useSearchParams();
   const listId = params?.get("id");
   const router = useRouter();
 
   const handleSubmit = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (contacts: IWhatsappToCreate[]) => {
       if (!contacts?.length) throw new Error("Selecione ao menos 1 contato!");
+
       if (!listId) throw new Error("Precisa de uma lista para popular!");
 
       const response = await apiWhatsapp.post("/contacts/save", {
@@ -37,20 +35,12 @@ const useImportsContacts = () => {
 
       return response.data;
     },
-    onSuccess: async () => {
-      setContacts([]);
+    onSuccess: async   () => {
+      toast.success("Importação iniciada!");
 
       await queryClient.invalidateQueries({
         queryKey: ["lists"],
       });
-
-      toast.success(
-        <div className="p-2">
-          <p className="font-semibold">Começado a importação</p>
-          <p className="text-sm">A lista foi atualizada.</p>
-        </div>,
-        { autoClose: 2500 }
-      );
 
       router.push("?");
     },
@@ -64,20 +54,54 @@ const useImportsContacts = () => {
   return { handleSubmit };
 };
 
-export const ImportContacts = () => {
-  const [contacts, setContacts] = useAtom(contactsAtoms);
-  const [openOptions, setOpenOption] = useState<Option>("whatsapp");
-  const { handleSubmit } = useImportsContacts();
-  const [showConfirm, setShowConfirm] = useState(false);
+const ImportByLabels = () => {
+  const { labels } = useWhatsappLabels();
+  const { importByLabelMutation } = useImportByLabel();
+  const params = useSearchParams();
+  const listId = params?.get("id");
 
-  const handleImport = () => {
-    handleSubmit.mutate();
-  };
+  return (
+    <div className="flex flex-col bg-gray-50 border mb-6 rounded-xl p-2">
+      <header className="font-semibold text-lg">
+        <h2 className={`${fontSaira}`}>Selecione por etiquetas</h2>
+      </header>
+
+      <div className="flex flex-wrap flex-1 gap-2">
+        {labels?.map((label, idx) => {
+          return (
+            <button
+              type="button"
+              key={idx}
+              onClick={async () =>
+                importByLabelMutation.mutateAsync({
+                  listId: Number(listId),
+                  labelId: label.id,
+                })
+              }
+              className="bg-indigo-200 rounded-xl text-indigo-950 px-3 p-2 font-semibold 
+                shadow-[0px_4px_0px_rgba(70,70,70,1)]
+                hover:translate-y-[2px] hover:shadow-[0px_2px_0px_rgba(70,70,70,1)] 
+                active:translate-y-[4px] active:shadow-[0px_0px_0px_rgba(70,70,70,1),inset_0_2px_4px_rgba(129,140,248,0.5)] 
+                transition-all border border-indigo-400/30"
+            >
+              <span className={`${fontSaira} font-semibold`}>
+                {label?.name}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+export const ImportContacts = () => {
+  const [openOptions, setOpenOption] = useState<Option | null>(null);
 
   return (
     <Modal.container>
-      <Modal.form className="rounded-2xl p-4 w-full max-w-full sm:max-w-[60rem] min-w-0 sm:min-w-[30rem]">
-        <Modal.header title="Importar contatos" />
+      <Modal.box className="rounded-3xl p-6 w-full bg-white max-w-full sm:max-w-[60rem] min-w-0 sm:min-w-[30rem]">
+        <Modal.header title="Importar contatos" className="mb-5" />
 
         <section className="w-full border-zinc-200 flex flex-col sm:flex-row divide-y sm:divide-x sm:divide-y-0 mb-4">
           <div className="flex flex-col sm:flex-row p-2 rounded-lg bg-blue-50/50 w-full">
@@ -105,124 +129,33 @@ export const ImportContacts = () => {
 
             <button
               type="button"
-              onClick={() => setOpenOption(".csv")}
-              data-selected={openOptions === ".csv"}
+              onClick={() => setOpenOption("file")}
+              data-selected={openOptions === "file"}
               className="p-2 sm:p-1 px-4 flex-1 flex items-center justify-center opacity-90 hover:opacity-100 data-[selected=true]:bg-blue-700/10 data-[selected=true]:cursor-default rounded-lg"
             >
               <span className={`${fontSaira} font-semibold text-gray-700`}>
-                .csv
+                .csv ou .xlsx
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setOpenOption("etiquetas")}
+              data-selected={openOptions === "etiquetas"}
+              className="p-2 sm:p-1 px-4 flex-1 flex items-center justify-center opacity-90 hover:opacity-100 data-[selected=true]:bg-blue-700/10 data-[selected=true]:cursor-default rounded-lg"
+            >
+              <span className={`${fontSaira} font-semibold text-gray-700`}>
+                Etiquetas
               </span>
             </button>
           </div>
         </section>
 
         {openOptions === "whatsapp" && <ImportWhatsapp />}
-        {openOptions === ".csv" && <ImportCSV />}
+        {openOptions === "file" && <ImportByFile />}
         {openOptions === "manual" && <CreateContact />}
-
-        <section className="mt-4 max-h-60 sm:max-h-40 overflow-y-auto border rounded-lg">
-          <h3
-            className={`${fontSaira} font-semibold p-2 bg-gray-50 text-gray-800 border-b text-sm sm:text-base`}
-          >
-            Contatos a serem importados: {contacts.length}
-          </h3>
-          <div className="flex flex-wrap text-gray-700 gap-3 p-3">
-            {contacts?.map((contact, index) => {
-              return (
-                <div
-                  key={index}
-                  className="flex p-2 text-gray-500 items-center bg-white border border-zinc-200 opacity-80 hover:opacity-100 rounded-lg"
-                >
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setContacts((prev) => {
-                        return [
-                          ...prev.filter(
-                            (data) => data.phoneNumber !== contact?.phoneNumber
-                          ),
-                        ];
-                      })
-                    }
-                    className="w-6 h-6 bg-gray-100 grid place-items-center rounded-full"
-                  >
-                    <IoClose size={20} />
-                  </button>
-
-                  <span className="font-semibold px-2">{contact?.name}</span>
-                  <span className="font-semibold text-sm border-l-2 px-2">
-                    {contact?.phoneNumber}
-                  </span>
-                </div>
-              );
-            })}
-
-            {!contacts?.length && (
-              <p className="text-gray-700 text-center p-4 text-sm sm:text-base">
-                Nenhum contato adicionado ainda
-              </p>
-            )}
-          </div>
-        </section>
-
-        <footer className="flex justify-end mt-4">
-          <button
-            id="import-button"
-            type="button"
-            onClick={handleImport}
-            data-loading={handleSubmit.isPending}
-            disabled={contacts.length === 0 || handleSubmit.isPending}
-            className={`p-3 px-4 sm:px-6 rounded-lg transition-all flex items-center gap-2 ${fontSaira} font-medium
-            bg-indigo-500 text-white`}
-          >
-            {handleSubmit.isPending && (
-              <>
-                <SimpleLoader className="w-5 h-5" />
-                <span className="text-sm sm:text-base">Importando...</span>
-              </>
-            )}
-
-            {!handleSubmit.isPending && (
-              <span className="text-sm sm:text-base">
-                Importar {contacts.length > 0 ? `(${contacts.length})` : ""}
-              </span>
-            )}
-          </button>
-        </footer>
-
-        {showConfirm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white p-4 sm:p-6 rounded-lg max-w-full sm:max-w-md w-full">
-              <h3
-                className={`${fontSaira} font-semibold text-base sm:text-lg mb-3 sm:mb-4`}
-              >
-                Confirmar Importação
-              </h3>
-              <p className="mb-3 sm:mb-4 text-sm sm:text-base">
-                Você está prestes a importar{" "}
-                <strong>{contacts.length} contatos</strong>. Deseja continuar?
-              </p>
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-end">
-                <button
-                  onClick={() => setShowConfirm(false)}
-                  className="px-4 py-2 border rounded-lg hover:bg-gray-50 w-full sm:w-auto"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={() => {
-                    setShowConfirm(false);
-                    handleSubmit.mutate();
-                  }}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 w-full sm:w-auto"
-                >
-                  Confirmar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </Modal.form>
+        {openOptions === "etiquetas" && <ImportByLabels />}
+      </Modal.box>
     </Modal.container>
   );
 };

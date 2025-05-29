@@ -2,34 +2,35 @@
 
 import { ListCard } from "@/components/create-list-contact/list-card";
 import { ModalLayout } from "@/components/modal-layout";
+import { IListContactResponse, useAllLists } from "@/hooks/use-all-lists";
 import { fontSaira } from "@/utils/fonts";
-import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { FaPlus } from "react-icons/fa";
 import { CreateListModal } from "./create";
+import { DeleteListModal } from "./delete-modal";
 import { DetailsListModal } from "./details-modal";
 import { ImportContacts } from "./import";
-import { IList } from "@/interfaces/IList";
-import { apiWhatsapp } from "@/utils/api";
-import { DeleteListModal } from "./delete-modal";
+import { useEffect } from "react";
+import { getSocket } from "@/utils/socket";
+import { queryClient } from "@/providers/query-provider";
 
-interface IListContactResponse {
-  list: IList;
-  _count: {
-    contacts: number;
-  };
+function calculateTotalContacts(
+  currentCount: number | undefined,
+  newBatch: unknown
+): number {
+  const existingCount = currentCount || 0;
+  const numericBatch =
+    typeof newBatch === "number" ? newBatch : Number(newBatch);
+  const validBatch = Number.isNaN(numericBatch) ? 0 : numericBatch;
+
+  return existingCount + validBatch;
 }
 
 export default function Lists() {
   const router = useRouter();
 
-  const { data: lists = [], isLoading } = useQuery<IListContactResponse[]>({
-    queryKey: ["lists"],
-    queryFn: async () => {
-      return (await apiWhatsapp.get("/lists-contacts"))?.data;
-    },
-  });
+  const { lists, isLoading } = useAllLists();
 
   const handlePopulateList = (id: number) => {
     router.push(`?modal=populate&id=${id}`);
@@ -39,13 +40,52 @@ export default function Lists() {
     router.push(`?modal=details&id=${id}`);
   };
 
+  useEffect(() => {
+    const socket = getSocket();
+    socket.emit("contacts-imports");
+
+    socket.on(
+      "contacts:imports:progress",
+      (data: { listId: string; new_batch: string }) => {
+        if (!data?.listId || !data?.new_batch) return;
+
+        queryClient.setQueryData<IListContactResponse[]>(
+          ["lists"],
+          (prevLists = []) => {
+            return prevLists.map((list) => {
+              if (list.list?.id.toString() === data.listId.toString()) {
+                return {
+                  ...list,
+                  _count: {
+                    ...list._count,
+                    contacts: calculateTotalContacts(
+                      list._count?.contacts,
+                      data.new_batch
+                    ),
+                  },
+                };
+              }
+              return list;
+            });
+          }
+        );
+
+        console.log("Contatos atualizados no cache", data);
+      }
+    );
+
+    return () => {
+      socket.off("contacts:imports:progress");
+    };
+  }, []);
+
   return (
     <ModalLayout
       modals={{
         create: CreateListModal,
         details: DetailsListModal,
         populate: ImportContacts,
-        delete: DeleteListModal
+        delete: DeleteListModal,
       }}
     >
       <div className="flex flex-col gap-6 p-4">

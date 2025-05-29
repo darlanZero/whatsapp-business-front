@@ -1,9 +1,11 @@
 "use client";
 
-import { ImportContacts, ImportGroups } from "@/components/import-contacts";
+import { ImportGroups } from "@/components/import-contacts/import-by-groups";
+import { ImportContactsByRecentChats } from "@/components/import-contacts/import-by-chats";
 import { useState } from "react";
+import { ImportContacts } from "@/components/import-contacts/import-by-contacts";
 
-export type Option = "contacts" | "groups";
+export type Option = "contacts" | "groups" | "chats";
 
 export const ImportWhatsapp = () => {
   const [option, setOption] = useState<Option>("contacts");
@@ -31,6 +33,15 @@ export const ImportWhatsapp = () => {
           </button>
 
           <button
+            onClick={() => setOption("chats")}
+            type="button"
+            data-selected={option === "chats"}
+            className="flex px-2 p-1 font-semibold data-[selected=true]:bg-gray-100 rounded-lg opacity-90 data-[selected=true]:opacity-100 hover:opacity-100"
+          >
+            Recentes
+          </button>
+
+          <button
             onClick={() => setOption("groups")}
             type="button"
             data-selected={option === "groups"}
@@ -42,6 +53,7 @@ export const ImportWhatsapp = () => {
       </section>
 
       {option === "contacts" && <ImportContacts />}
+      {option === "chats" && <ImportContactsByRecentChats />}
       {option === "groups" && <ImportGroups />}
     </div>
   );

@@ -67,9 +67,8 @@ export default function EditWhatsapp() {
         <header className="flex items-center justify-between gap-3 font-semibold">
           <h1 className={`${fontSaira} text-xl capitalize`}>{data?.name}</h1>
           <div
-            className={`px-4 p-[1px] rounded-full ${
-              StatusWhatsappStyle[data.connectionStatus]
-            } text-sm border `}
+            className={`px-4 p-[1px] rounded-full ${StatusWhatsappStyle[data.connectionStatus]
+              } text-sm border `}
           >
             <span>{StatusWhatsappLegend[data.connectionStatus]}</span>
           </div>
@@ -79,13 +78,15 @@ export default function EditWhatsapp() {
           <section className="flex items-center gap-2 bg-zinc-50 border rounded-xl  justify-between">
             <div className="flex gap-2 items-center flex-1 p-3 ">
               <div className="w-12 h-12 bg-white shadow-inner rounded-full relative overflow-hidden">
-                <Image
-                  alt=""
-                  quality={20}
-                  src={data?.profilePicUrl}
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
+                {data?.profilePicUrl && (
+                  <Image
+                    alt=""
+                    quality={20}
+                    src={data?.profilePicUrl}
+                    fill
+                    style={{ objectFit: "cover" }}
+                  />
+                )}
               </div>
               <div
                 className={`${fontInter} flex flex-col items-center font-semibold text-gray-600`}

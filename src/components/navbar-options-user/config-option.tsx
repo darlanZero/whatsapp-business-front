@@ -1,15 +1,14 @@
 "use client";
 
+import { useClickOutside } from "@/hooks/use-click-outside";
+import { queryClient } from "@/providers/query-provider";
 import Cookies from "js-cookie";
 import { LogOut } from "lucide-react";
-import { ModalOptions } from "../modal-options";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import { useRef } from "react";
-import { useClickOutside } from "@/hooks/use-click-outside";
 import { FaUser } from "react-icons/fa";
-import { queryClient } from "@/providers/query-provider";
-import { TOKEN_KEY } from "@/utils/cookies-keys";
+import { toast } from "react-toastify";
+import { ModalOptions } from "../modal-options";
 
 interface NavBarUserConfigOptionProps {
   close: () => void;
