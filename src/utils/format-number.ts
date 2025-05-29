@@ -1,17 +1,37 @@
 export function formatNumber(phoneNumber: string): string {
+  try {
+    // Remove caracteres não numéricos
+    const cleaned = phoneNumber?.toString().replace(/\D/g, "");
 
+    // Regex para validar números com ou sem código do país
+    const regexWithCountryCode = /^(?:\+?55)?(\d{2})(\d{1})?(\d{4})(\d{4})$/;
+    const regexWithoutCountryCode = /^(\d{2})(\d{1})?(\d{4})(\d{4})$/;
 
+    let match;
 
-  const cleaned = phoneNumber?.toString().replace(/\D/g, "");
+    if (cleaned?.startsWith("55") || cleaned?.startsWith("+55")) {
+      match = cleaned?.match(regexWithCountryCode);
+    } else {
+      match = cleaned?.match(regexWithoutCountryCode);
+    }
 
-  if (cleaned?.startsWith("55") && cleaned?.length === 13) {
-    const countryCode = cleaned.slice(0, 2);
-    const areaCode = cleaned.slice(2, 4);
-    const firstPart = cleaned.slice(4, 9);
-    const secondPart = cleaned.slice(9);
+    if (match) {
+      const areaCode = match[1]; // DDD
+      const hasNine = match[2]; // Dígito 9 (opcional)
+      const firstPart = match[3]; // Primeira parte do número
+      const secondPart = match[4]; // Segunda parte do número
 
-    return `+${countryCode} (${areaCode}) ${firstPart}-${secondPart}`;
+      // Formata com ou sem o 9
+      const formattedNumber = hasNine
+        ? `+55 (${areaCode}) ${hasNine}${firstPart}-${secondPart}`
+        : `+55 (${areaCode}) ${firstPart}-${secondPart}`;
+
+      return formattedNumber;
+    }
+
+    // Retorna o número original se não for válido
+    return phoneNumber;
+  } catch {
+    return "";
   }
-
-  return phoneNumber;
 }

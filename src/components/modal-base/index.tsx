@@ -15,6 +15,10 @@ interface ModalFormProps extends HTMLMotionProps<"form"> {
   children: React.ReactNode;
 }
 
+interface ModalDivProps extends HTMLMotionProps<"div"> {
+  children: React.ReactNode;
+}
+
 const ModalContainer = (props: HTMLMotionProps<"div">) => {
   const { className, ...rest } = props;
 
@@ -64,6 +68,31 @@ export const ModalForm = (props: ModalFormProps) => {
   );
 };
 
+export const ModalDiv = (props: ModalDivProps) => {
+  const { className, children, ...rest } = props;
+  const classStyle = twMerge(
+    "flex flex-col m-auto bg-white border border-indigo-50 rounded-md w-full max-w-[30rem] will-change-transform",
+    className
+  );
+
+  return (
+    <motion.div
+      initial={{ scale: 0.8, rotateY: 10, opacity: 0.8 }}
+      animate={{ scale: 1, opacity: 1, rotateY: 0 }}
+      exit={{ scale: 0.8, rotateY: 10, opacity: 0.6 }}
+      transition={{
+        duration: 0.1,
+        type: "tween",
+        filter: { duration: 0.1 },
+      }}
+      {...rest}
+      className={classStyle}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
 const ModalHeader = (
   props: HTMLAttributes<HTMLDivElement> & { title: string }
 ) => {
@@ -85,6 +114,7 @@ const ModalHeader = (
 
 const Modal = {
   container: ModalContainer,
+  box: ModalDiv,
   form: ModalForm,
   header: ModalHeader,
 };

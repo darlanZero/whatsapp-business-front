@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SimpleLoader } from "../simple-loader";
+import { toast } from "react-toastify";
 
 const useCreateList = () => {
   const router = useRouter();
@@ -28,12 +29,14 @@ const useCreateList = () => {
 
       const response = await apiWhatsapp.post(`lists-contacts/create`, newList);
 
-      return response.data; // Retornar os dados para que sejam disponibilizados no onSuccess
+      return response.data;
     },
-    onSuccess: (  ) => {
+    onSuccess: () => {
       qc.invalidateQueries({
         queryKey: ["lists"],
       });
+
+      toast.success("Lista criada com sucesso!");
 
       router.push("?");
     },

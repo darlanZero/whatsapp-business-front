@@ -9,7 +9,7 @@ import "dayjs/locale/pt-br";
 import { useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 
-type ResponseAdminWhatsapps = {
+export type ResponseAdminWhatsapps = {
   total: number;
   whatsapps: IWhatsapp[];
 };
@@ -17,7 +17,7 @@ type ResponseAdminWhatsapps = {
 const limit = 10;
 
 export const useWhatsapp = () => {
-  const { informations } = useContext(UserContext);
+  const { informations, isLoading: loadingSession } = useContext(UserContext);
   const params = useSearchParams();
   const initialPage = Number(params?.get("page")) || 1;
 
@@ -32,7 +32,7 @@ export const useWhatsapp = () => {
       queryKey: ["whatsapp", "admin", page],
       queryFn: async () => {
         const url = `/whatsapp/list?page=${page}&limit=${limit}`;
-        return (await apiAuth.get<ResponseAdminWhatsapps>(url))?.data;
+        return (await apiAuth.get<ResponseAdminWhatsapps>(url))?.data || null;
       },
       enabled:
         informations?.role === UserRole.ADMIN ||
@@ -49,7 +49,7 @@ export const useWhatsapp = () => {
 
   return {
     page,
-    isLoading: loadingAdmin || loadingClient,
+    isLoading: loadingAdmin || loadingClient || loadingSession,
     whatsapps: {
       admin: whatsappAdmin,
       client: whatsappClient,

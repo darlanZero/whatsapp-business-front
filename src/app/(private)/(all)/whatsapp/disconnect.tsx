@@ -10,8 +10,7 @@ const useDisconnect = () => {
 
   const logout = useMutation({
     mutationFn: async (name: string) => {
-      const response = await apiAuth.post(`whatsapp/instance/logout/${name}`);
-      console.log(response);
+      await apiAuth.post(`whatsapp/instance/logout/${name}`);
     },
 
     onSuccess: async () => {

@@ -2,11 +2,11 @@ import { UserRole } from "./user-role";
 
 
 interface Address {
-  zipCode: string;
-  city: string;
-  state: string;
-  country: string;
-  street: string;
+  zipCode?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  street?: string;
 }
 
 export interface IUser {
@@ -18,4 +18,6 @@ export interface IUser {
   role: UserRole;
   phoneNumber: string;
   address?: Address
+  isActive?: boolean
+  createdAt: Date;
 }

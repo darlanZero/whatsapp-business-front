@@ -39,7 +39,7 @@ const useLoginPage = () => {
 
       Cookies.set(TOKEN_KEY, token);
       toast.success("Login efetuado");
-      router.replace("/dashboard");
+      router.replace("/session-whatsapp");
     } catch {
       toast.error("credenciais incorretas");
     }
@@ -136,15 +136,6 @@ export default function Login() {
           Entrar
         </button>
       </footer>
-
-      <div className="flex gap-2 items-center mt-3 px-11">
-        <span>
-          Novo na plataforma?{" "}
-          <Link href="/registration" className="text-blue-400">
-            Clique aqui e cadastra-se
-          </Link>
-        </span>
-      </div>
     </form>
   );
 }
