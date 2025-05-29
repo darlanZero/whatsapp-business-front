@@ -9,19 +9,31 @@ import { ModalType } from "../modal-options";
 import { NavbarUserConfigOption } from "../navbar-options-user/config-option";
 import { NavBarNotificationOption } from "../navbar-options-user/notifications.option";
 import { fontInter } from "@/utils/fonts";
+import { IoLogoWhatsapp } from "react-icons/io5";
+import { useRouter } from "next/navigation";
 
 export const Navbar = () => {
-  const { informations } = useContext(UserContext);
+  const { informations, whatsapp } = useContext(UserContext);
   const [modals, setModal] = useState<ModalType | null>(null);
+  const router = useRouter();
 
   const handleModal = (name: ModalType) => {
     setModal(name);
   };
 
   return (
-    <div className="flex items-center justify-between mb-6 text-gray-500 relative z-20">
-      <div></div>
-      <div className="flex items-center gap-4">
+    <div className="flex items-center flex-wrap-reverse justify-between mb-6 text-gray-500 relative z-20">
+      <div className="flex">
+        <button
+          type="button"
+          onClick={() => router.push("/session-whatsapp")}
+          className="p-2 bg-white border rounded-lg flex items-center gap-4 hover:bg-gray-100"
+        >
+          <IoLogoWhatsapp />
+          <span>{whatsapp?.instanceName || "selecione um whatsapp"}</span>
+        </button>
+      </div>
+      <div className="flex items-center gap-4 flex-wrap">
         <div className="">
           <button
             onClick={() => handleModal("notifications")}
@@ -49,15 +61,14 @@ export const Navbar = () => {
           </Avatar>
 
           {informations?.email && (
-            <div className={`${fontInter} text-gray-500 text-right flex flex-col text-sm -space-y-1`}>
-              <span className="text-base">{informations?.nome}</span>
-              
+            <div
+              className={`${fontInter} text-gray-500 text-right flex flex-col text-sm -space-y-1`}
+            >
+              <span className="text-base">{informations?.name}</span>
+
               {informations?.role === UserRole.ADMIN && (
-                <span className={`text-xs`}>
-                  {informations?.role}
-                </span>
+                <span className={`text-xs`}>{informations?.role}</span>
               )}
-            
             </div>
           )}
 

@@ -12,6 +12,9 @@ import { IoAlertCircleSharp } from "react-icons/io5";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { FaCheck } from "react-icons/fa6";
+import { TOKEN_KEY } from "@/utils/cookies-keys";
 
 const useLoginPage = () => {
   const router = useRouter();
@@ -21,15 +24,24 @@ const useLoginPage = () => {
   });
 
   const login = async (data: LoginSchemaProps) => {
-    const { email, password } = data;
-    const token = await handleLogin(email, password);
+    try {
+      const { email, password } = data;
+      const token = await handleLogin(email, password);
 
-    if (token) {
-      Cookies.set("token", token);
+      Object.keys(Cookies.get()).forEach(function (cookieName) {
+        Cookies.remove(cookieName);
+      });
+
+      if (!token) {
+        toast.error("Email ou senha incorretos!");
+        return;
+      }
+
+      Cookies.set(TOKEN_KEY, token);
       toast.success("Login efetuado");
-      router.replace("/dashboard")
-    } else {
-      toast.error("credenciais erradas");
+      router.replace("/session-whatsapp");
+    } catch {
+      toast.error("credenciais incorretas");
     }
   };
 
@@ -43,11 +55,12 @@ export default function Login() {
   const { form, login } = useLoginPage();
   const { register, handleSubmit, formState } = form;
   const { errors, isSubmitting } = formState;
+  const [continueLogged, setContinueLogged] = useState<boolean>(false);
 
   return (
     <form
       onSubmit={handleSubmit(login)}
-      className="bg-zinc-200/20 backdrop-blur-2xl p-3 flex flex-col py-10 rounded-lg h-auto w-full max-w-[30rem] pb-[5rem] shadow shadow-zinc-900"
+      className="bg-zinc-200/20 text-zinc-100 backdrop-blur-2xl p-3 flex flex-col py-10 rounded-lg h-auto w-full max-w-[30rem] pb-[5rem] shadow shadow-zinc-900"
     >
       <header className="flex p-4 items-center justify-center gap-10">
         <Logo />
@@ -102,7 +115,13 @@ export default function Login() {
         </label>
 
         <div className="flex mt-1 gap-2 items-center">
-          <button className="w-5 h-5 bg-transparent border border-zinc-400 rounded"></button>
+          <button
+            type="button"
+            onClick={() => setContinueLogged((prev) => !prev)}
+            className="grid place-items-center w-5 h-5 bg-transparent border border-zinc-400 rounded"
+          >
+            {continueLogged && <FaCheck />}
+          </button>
           <span className="text-sm">Lembre-me de mim</span>
         </div>
       </section>
@@ -117,15 +136,6 @@ export default function Login() {
           Entrar
         </button>
       </footer>
-
-      <div className="flex gap-2 items-center mt-3 px-11">
-        <span>
-          Novo na plataforma?{" "}
-          <Link href="/registration" className="text-blue-400">
-            Clique aqui e cadastra-se
-          </Link>
-        </span>
-      </div>
     </form>
   );
 }

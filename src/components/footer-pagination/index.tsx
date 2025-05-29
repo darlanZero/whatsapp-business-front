@@ -2,8 +2,8 @@
 
 import { fontSaira } from "@/utils/fonts";
 import { generatePageNumbers } from "@/utils/generate-page-numbers";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { usePushQuery } from "@/utils/push-query";
+import { memo, useState } from "react";
 
 interface FooterPaginationProps {
   page: number;
@@ -11,29 +11,22 @@ interface FooterPaginationProps {
   limit: number;
 }
 
-export const FooterPagination = ({
-  page: initialPage,
-  total,
-  limit,
-}: FooterPaginationProps) => {
-  const router = useRouter();
-  const totalPages = Math.ceil(total / limit);
-  const [page, setPage] = useState(initialPage);
+interface PageButtonProps {
+  pageNumber: number;
+  isActive: boolean;
+  onPageChange: (page: number) => void;
+}
 
-  const handlePageChange = (newPage: number) => {
-    router.push(`?page=${newPage}`);
-    setPage(newPage);
-  };
 
-  const PageButton = ({
-    pageNumber,
-    isActive,
-  }: {
-    pageNumber: number;
-    isActive: boolean;
-  }) => (
+const PageButton = memo(function PageButton({
+  pageNumber,
+  isActive,
+  onPageChange,
+}: PageButtonProps) {
+  return (
     <button
-      onClick={() => handlePageChange(pageNumber)}
+      type="button"
+      onClick={() => onPageChange(pageNumber)}
       className={`px-3 py-1 rounded-full ${
         isActive ? "bg-indigo-500 text-white" : "bg-gray-200 text-zinc-800"
       }`}
@@ -41,6 +34,21 @@ export const FooterPagination = ({
       {pageNumber}
     </button>
   );
+});
+
+export const FooterPagination = ({
+  page: initialPage,
+  total,
+  limit,
+}: FooterPaginationProps) => {
+  const totalPages = Math.ceil(total / limit);
+  const [page, setPage] = useState(initialPage);
+  const pushQuery = usePushQuery();
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    pushQuery("page", newPage.toString());
+  };
 
   const renderPageNumbers = generatePageNumbers(page, totalPages).map(
     (pageNumber, index) =>
@@ -49,9 +57,12 @@ export const FooterPagination = ({
           key={index}
           pageNumber={pageNumber}
           isActive={page === pageNumber}
+          onPageChange={handlePageChange}
         />
       ) : (
-        <span key={index}>{pageNumber}</span>
+        <span key={index} className="px-3 py-1 text-zinc-800">
+          {pageNumber}
+        </span>
       )
   );
 
@@ -59,6 +70,7 @@ export const FooterPagination = ({
     <div className="flex justify-center items-center gap-2 p-3 border-t border-zinc-100">
       {page > 1 && (
         <button
+          type="button"
           onClick={() => handlePageChange(page - 1)}
           className="px-3 py-1 rounded-full bg-white border text-zinc-800"
         >
@@ -68,6 +80,7 @@ export const FooterPagination = ({
       {renderPageNumbers}
       {page < totalPages && (
         <button
+          type="button"
           onClick={() => handlePageChange(page + 1)}
           className="px-3 py-1 rounded-full bg-white border text-zinc-800"
         >

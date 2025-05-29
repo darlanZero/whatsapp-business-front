@@ -9,7 +9,7 @@ import { updateUser } from "@/hooks/use-update-profile";
 import { queryClient } from "@/providers/query-provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User, userSchema } from "@/schemas/user-schema";
-import { api } from "@/utils/api";
+import { apiWhatsapp } from "@/utils/api";
 
 
 function useBusinessLogic() {
@@ -17,7 +17,7 @@ function useBusinessLogic() {
 
   const userQuery = useQuery({
     queryKey: ["userProfile"],
-    queryFn: async () => (await api.get("/user-profile/i"))?.data,
+    queryFn: async () => (await apiWhatsapp.get("/user-profile/i"))?.data,
   });
 
   const {

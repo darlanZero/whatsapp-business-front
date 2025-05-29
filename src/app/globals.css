@@ -28,10 +28,6 @@ body {
 }
 /* background Victor*/
 
-button {
-  cursor: pointer;
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -137,5 +133,12 @@ button {
 @layer base {
   :where(*) {
     @apply border-zinc-100;
+  }
+}
+@layer base {
+  :where(*) {
+    button {
+      cursor: pointer;
+    }
   }
 }

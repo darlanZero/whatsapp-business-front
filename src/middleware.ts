@@ -2,10 +2,11 @@ import { jwtDecode } from "jwt-decode";
 import { NextRequest, NextResponse } from "next/server";
 import { PUBLIC_PAGES } from "./constants/public-routes";
 import { JWT_DECODED_DATA } from "./interfaces/jwt-decoded-data";
+import { TOKEN_KEY } from "./utils/cookies-keys";
 
 export default function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  const token = request.cookies.get("token")?.value || null;
+  const token = request.cookies.get(TOKEN_KEY)?.value || null;
 
   const isPublicPage = PUBLIC_PAGES.includes(pathname);
   const isSessionExpiredPage = pathname === "/session-expired";

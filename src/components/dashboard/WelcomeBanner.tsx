@@ -15,13 +15,13 @@ export const WelcomeBanner = () => {
           <p className="flex items-center mb-2 font-bold">
             Bem vindo de volta <span className="ml-2 inline-block">👋</span>
           </p>
-          {informations?.nome && (
+          {informations?.name && (
             <h2 className={`${fontSaira} text-3xl font-bold mb-2`}>
-              {informations?.nome}
+              {informations?.name}
             </h2>
           )}
 
-          {!informations?.nome && (
+          {!informations?.name && (
             <div className="w-[16rem] h-7 bg-white/50 rounded-full"/>
           )}
         </div>

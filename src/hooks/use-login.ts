@@ -1,4 +1,4 @@
-import { publicApi } from "@/utils/api";
+import { apiPublic } from "@/utils/api";
 
 interface LoginResponse {
   token: string | null;
@@ -9,7 +9,7 @@ export const handleLogin = async (
   password: string
 ): Promise<string | null> => {
   try {
-    const { data } = await publicApi.post<LoginResponse>("/auth/login", {
+    const { data } = await apiPublic.post<LoginResponse>("/auth/login", {
       email,
       password,
     });

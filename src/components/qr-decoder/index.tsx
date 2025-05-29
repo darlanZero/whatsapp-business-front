@@ -20,7 +20,9 @@ export function QRCodeDecoder({ base64 }: QRCodeDecoderProps) {
 
     const handleImageLoad = async () => {
       try {
-        await QrScanner.scanImage(img);
+        await QrScanner.scanImage(img, {
+          returnDetailedScanResult: true,
+        });
       } catch {
         console.log("error");
       }
@@ -28,7 +30,7 @@ export function QRCodeDecoder({ base64 }: QRCodeDecoderProps) {
 
     img.onload = handleImageLoad;
     img.onerror = () => {
-      toast("Houve um erro ao tentar gerar um QR code")
+      toast("Houve um erro ao tentar gerar um QR code");
     };
 
     return () => {

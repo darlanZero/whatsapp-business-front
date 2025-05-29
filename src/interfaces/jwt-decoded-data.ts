@@ -3,7 +3,11 @@ export interface JWT_DECODED_DATA {
 	exp: number;
 	iat: number;
 	id: string | number;
-	nome: string;
+	name: string;
 	username: string;
 	role: string;
+}
+
+export interface JWT_DECODED_DATA_WHATSAPP {
+	instanceName: string;
 }

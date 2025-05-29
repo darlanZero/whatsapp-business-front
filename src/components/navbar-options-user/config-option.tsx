@@ -1,13 +1,14 @@
 "use client";
 
+import { useClickOutside } from "@/hooks/use-click-outside";
+import { queryClient } from "@/providers/query-provider";
 import Cookies from "js-cookie";
 import { LogOut } from "lucide-react";
-import { ModalOptions } from "../modal-options";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import { useRef } from "react";
-import { useClickOutside } from "@/hooks/use-click-outside";
 import { FaUser } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { ModalOptions } from "../modal-options";
 
 interface NavBarUserConfigOptionProps {
   close: () => void;
@@ -25,14 +26,19 @@ export const NavbarUserConfigOption = (props: NavBarUserConfigOptionProps) => {
 
   useClickOutside(ref, close);
 
-  const logout = () => {
-    Cookies.remove("token");
+  const logout = async () => {
+    const cookies = Cookies.get();
+    Object.keys(cookies)?.forEach((cookieName) => {
+      Cookies.remove(cookieName, { path: "/" });
+    });
+
+    queryClient.clear();
 
     toast(<LogoutToast />, {
       hideProgressBar: true,
     });
 
-    router.push("/login");
+    window.location.href = '/login';
   };
 
   return (
