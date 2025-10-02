@@ -58,3 +58,5 @@ npm run dev
 5. **Acesse a aplicação**:
 
    Abra o navegador e acesse [http://localhost:3000](http://localhost:3000) para visualizar o projeto em execução.
+
+   teste
