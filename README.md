@@ -29,27 +29,31 @@ Certifique-se de ter o seguinte instalado em sua máquina:
 
 1. **Clone o repositório**:
 
-   ```bash
-   git clone https://github.com/best-brazilian-devs/salvazap-frontend.git
-   ```
+```bash
+git clone https://github.com/salvazapV2/salvazap-frontend.git
+
+```
 
 2. **Acesse o diretório do projeto**:
 
-   ```bash
-   cd salvazap-frontend
-   ```
+```bash
+cd salvazap-frontend
+
+```
 
 3. **Instale as dependências**:
 
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+
+```
 
 4. **Inicie o servidor de desenvolvimento**:
 
-   ```bash
-   npm run dev
-   ```
+```bash
+npm run dev
+
+```
 
 5. **Acesse a aplicação**:
 
