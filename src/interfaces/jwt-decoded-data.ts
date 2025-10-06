@@ -6,6 +6,7 @@ export interface JWT_DECODED_DATA {
 	name: string;
 	username: string;
 	role: string;
+	apiType?: 'evolution' | 'meta';
 }
 
 export interface JWT_DECODED_DATA_WHATSAPP {
