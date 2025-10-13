@@ -21,7 +21,7 @@ export function UserProvider({ children }: UserProviderProps) {
 
   const [whatsapp, setWhatsapp] = useState<JWT_DECODED_DATA_WHATSAPP | null>(null);
 
-  const [apiType, setApiType] = useState<IApiSelection | null>(null);
+  const [apiType, setApiTypeState] = useState<IApiSelection | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
@@ -58,8 +58,35 @@ export function UserProvider({ children }: UserProviderProps) {
     loadUserData();
   }, [pathname]);
 
-  const setApiTypeState = (api: IApiSelection) => {
-
-    const
+  const setApiType = (newApiType: IApiSelection) => {
+    Cookies.set(API_TYPE_KEY, newApiType, { expires: 30});
+    setApiTypeState(newApiType)
   }
+
+  const clearApiType = () => {
+    Cookies.remove(API_TYPE_KEY);
+    setApiTypeState(null);
+  }
+
+  const isMeta = apiType === "meta"
+  const isEvolution = apiType === "evolution"
+
+  return (
+    <UserContext.Provider
+      value={{
+        informations,
+        whatsapp,
+        apiType,
+        isLoading,
+        setApiType,
+        setInformations,
+        clearApiType,
+        isMeta,
+        isEvolution,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  )
+  
 };
