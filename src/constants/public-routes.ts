@@ -1,1 +1,5 @@
-export const PUBLIC_PAGES = ["/login", "/registration"];
+export const PUBLIC_PAGES = [
+    "/login", 
+    "/registration",
+    "/api-selection",
+];

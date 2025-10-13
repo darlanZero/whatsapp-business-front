@@ -8,58 +8,57 @@ import { useEffect, useState } from "react";
 import { UserContext } from "@/contexts/user-context";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
-import { TOKEN_KEY, TOKEN_WHATSAPP_KEY } from "@/utils/cookies-keys";
+import { API_TYPE_KEY, TOKEN_KEY, TOKEN_WHATSAPP_KEY } from "@/utils/cookies-keys";
+import { IApiSelection } from "@/interfaces/IApiSelection";
+import { usePathname, useRouter } from "next/navigation";
 
-export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+interface UserProviderProps {
+  children: React.ReactNode;
+}
 
-  const [whatsapp, setWhatsapp] = useState<JWT_DECODED_DATA_WHATSAPP | null>(
-    null
-  );
+export function UserProvider({ children }: UserProviderProps) {
+  const [informations, setInformations] = useState<JWT_DECODED_DATA | null>(null);
 
-  const [informations, setInformations] = useState<JWT_DECODED_DATA | null>(
-    null
-  );
+  const [whatsapp, setWhatsapp] = useState<JWT_DECODED_DATA_WHATSAPP | null>(null);
 
-  const handleInformations = (informations: JWT_DECODED_DATA) => {
-    setInformations(informations);
-  };
+  const [apiType, setApiType] = useState<IApiSelection | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    const token = Cookies.get(TOKEN_KEY);
-    if (!token) {
-      setIsLoading(false);
-      return;
+    const loadUserData = () => {
+      try {
+        const savedApiType = Cookies.get(API_TYPE_KEY) as IApiSelection;
+        if (savedApiType) {
+          setApiTypeState(savedApiType);
+        }
+
+        const token = Cookies.get(TOKEN_KEY);
+        if (token) {
+          const decoded = jwtDecode<JWT_DECODED_DATA>(token);
+          setInformations(decoded);
+        }
+
+        if (savedApiType === "evolution") {
+          const tokenWhatsapp = Cookies.get(TOKEN_WHATSAPP_KEY);
+          if (tokenWhatsapp) {
+            const decodedWhatsapp = jwtDecode<JWT_DECODED_DATA_WHATSAPP>(tokenWhatsapp);
+            setWhatsapp(decodedWhatsapp);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading user data:", error);
+      } finally {
+        setIsLoading(false);
+      }
     }
 
-    try {
-      const decoded = jwtDecode<JWT_DECODED_DATA>(token);
-      setInformations(decoded);
+    loadUserData();
+  }, [pathname]);
 
-      const whatsappToken = Cookies.get(TOKEN_WHATSAPP_KEY);
-      if (!whatsappToken) return;
-
-      const whatsappDecoded =
-        jwtDecode<JWT_DECODED_DATA_WHATSAPP>(whatsappToken);
-
-      setWhatsapp(whatsappDecoded);
-    } catch (error) {
-      console.error("Token decoding error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  return (
-    <UserContext.Provider
-      value={{
-        informations,
-        setInformations: handleInformations,
-        whatsapp,
-        isLoading,
-      }}
-    >
-      {children}
-    </UserContext.Provider>
-  );
+  const setApiTypeState = (api: IApiSelection) => {
+    constr
+  }
 };
