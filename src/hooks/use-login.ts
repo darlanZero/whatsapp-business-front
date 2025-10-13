@@ -5,8 +5,8 @@ interface LoginResponse {
 }
 
 export const handleLogin = async (
-  email: string,
-  password: string
+  email: string | undefined,
+  password: string | undefined
 ): Promise<string | null> => {
   try {
     const { data } = await apiPublic.post<LoginResponse>("/auth/login", {
@@ -20,4 +20,16 @@ export const handleLogin = async (
     return null;
   }
 };
+
+export const handleMetaCallback = async (code: string): Promise<string | null> => {
+  try {
+    const { data } = await apiPublic.post<LoginResponse>("/auth/meta/callback", {
+      code,
+    });
+    return data?.token ?? null;
+  } catch (error) {
+    console.error("Meta login failed:", error);
+    return null;
+  }
+}
     

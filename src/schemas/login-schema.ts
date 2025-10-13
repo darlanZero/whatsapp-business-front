@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const loginSchema = z.object({
+export const LoginEvolutionSchema = z.object({
   email: z
     .string()
     .email({ message: "O email está inválido" })
@@ -9,4 +9,15 @@ export const loginSchema = z.object({
   password: z.string().min(1, "A senha é um campo obrigatório"),
 });
 
-export type LoginSchemaProps = z.infer<typeof loginSchema>;
+export const loginMetaSchema = z.object({
+  email: z
+    .string()
+    .optional(),
+  password: z.string().optional(),
+})
+
+export const loginSchema = z.union([LoginEvolutionSchema, loginMetaSchema]);
+
+export type LoginEvolutionSchemaProps = z.infer<typeof LoginEvolutionSchema>;
+export type LoginMetaSchemaProps = z.infer<typeof loginMetaSchema>;
+export type LoginSchemaProps = LoginEvolutionSchemaProps | LoginMetaSchemaProps;
