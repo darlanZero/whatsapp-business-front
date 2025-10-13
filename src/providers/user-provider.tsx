@@ -24,7 +24,6 @@ export function UserProvider({ children }: UserProviderProps) {
   const [apiType, setApiTypeState] = useState<IApiSelection | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {

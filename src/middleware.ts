@@ -10,35 +10,41 @@ export default function middleware(request: NextRequest) {
   const apiType = request.cookies.get(API_TYPE_KEY)?.value || null;
   const isPublicPage = PUBLIC_PAGES.includes(pathname);
   const isSessionExpiredPage = pathname === "/session-expired";
+  const isApiSelectionPage = pathname === "/api-selection";
+
+  if (!apiType && !isApiSelectionPage) {
+    return redirectTo("/api-selection", request);
+  }
 
   // Se não tem token
-  if (!token) {
+  if (apiType && !token) {
     // Pode acessar rota pública
     if (isPublicPage) return NextResponse.next();
 
     // Não pode acessar rota privada
-    return NextResponse.redirect(new URL("/login", request.url));
+    return redirectTo("/login", request);
   }
 
   // Com token, vamos verificar se está expirado
   if(token) {
-    const decoded = jwtDecode<JWT_DECODED_DATA>(token);
-    const isExpired = Date.now() >= decoded?.exp * 1000;
-  
-    if (isExpired && !isSessionExpiredPage) {
-      return redirectTo("/session-expired", request);
-    }
-  
-    if (!isExpired && isSessionExpiredPage) {
-      return redirectTo("/dashboard", request);
-    }
-  
-    if (!isExpired && isPublicPage) {
-      return redirectTo("/dashboard", request);
-    }
-
-    if (!apiType && !isPublicPage && pathname !== "/select-api") {
-      return redirectTo("/select-api", request);
+    try{
+      const decoded = jwtDecode<JWT_DECODED_DATA>(token);
+      const isExpired = Date.now() >= decoded?.exp * 1000;
+    
+      if (isExpired && !isSessionExpiredPage) {
+        return redirectTo("/session-expired", request);
+      }
+    
+      if (!isExpired && isSessionExpiredPage) {
+        return redirectTo("/dashboard", request);
+      }
+    
+      if (!isExpired && isPublicPage && !isApiSelectionPage) {
+        return redirectTo("/dashboard", request);
+      }
+    } catch(error){
+      console.error("Error decoding token:", error);
+      return redirectTo("/login", request);      
     }
   }
 

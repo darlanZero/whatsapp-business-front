@@ -12,9 +12,10 @@ import { IoAlertCircleSharp } from "react-icons/io5";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
 import { TOKEN_KEY } from "@/utils/cookies-keys";
+import { useUser } from "@/hooks/use-user";
 
 const useLoginPage = () => {
   const router = useRouter();
@@ -56,6 +57,14 @@ export default function Login() {
   const { register, handleSubmit, formState } = form;
   const { errors, isSubmitting } = formState;
   const [continueLogged, setContinueLogged] = useState<boolean>(false);
+  const { apiType, isMeta, isEvolution } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!apiType) {
+      router.push("/api-selection");
+    }
+  }, [apiType, router]);
 
   return (
     <form
