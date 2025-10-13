@@ -59,6 +59,7 @@ export function UserProvider({ children }: UserProviderProps) {
   }, [pathname]);
 
   const setApiTypeState = (api: IApiSelection) => {
-    constr
+
+    const
   }
 };
