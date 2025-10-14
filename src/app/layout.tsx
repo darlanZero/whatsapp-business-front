@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import { QueryProvider } from "@/providers/query-provider";
+import { UserProvider } from "@/providers/user-provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,17 +15,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <QueryProvider>
-      <html lang="pt-BR" className="*:border-red-500">
-        <body className={`antialiased`} cz-shortcut-listen="true">
-          {children}
-          <ToastContainer
-            style={{ zIndex: 9999 }}
-            theme="dark"
-            position="top-left"
-          />
-        </body>
-      </html>
-    </QueryProvider>
+    <UserProvider>
+      <QueryProvider>
+        <html lang="pt-BR" className="*:border-red-500">
+          <body className={`antialiased`} cz-shortcut-listen="true">
+            {children}
+            <ToastContainer
+              style={{ zIndex: 9999 }}
+              theme="dark"
+              position="top-left"
+            />
+          </body>
+        </html>
+      </QueryProvider>
+    </UserProvider>
   );
 }
