@@ -85,14 +85,23 @@ export default function Login() {
   const { register, handleSubmit, formState } = form;
   const { errors, isSubmitting } = formState;
   const [continueLogged, setContinueLogged] = useState<boolean>(false);
-  const { apiType } = useUser();
+  const { apiType, isLoading } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (!apiType) {
+    if (!isLoading && !apiType) {
+      console.log('Contexto carregado mas sem apiType, redirecionando...');
       router.push("/api-selection");
     }
-  }, [apiType, router]);
+  }, [apiType, isLoading, router]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <SimpleLoader className="w-8 h-8" />
+      </div>
+    )
+  }
 
   if (isMeta) {
     return (
