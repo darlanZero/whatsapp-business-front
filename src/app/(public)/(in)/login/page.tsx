@@ -97,8 +97,8 @@ export default function Login() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <SimpleLoader className="w-8 h-8" />
+      <div className="min-h-screen flex items-center justify-center">
+        <SimpleLoader className="w-8 h-8 " />
       </div>
     )
   }

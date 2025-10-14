@@ -4,7 +4,6 @@ import { useUser } from "@/hooks/use-user";
 import Cookies from "js-cookie";
 import { IApiSelection, IApiSelectionConfig } from "@/interfaces/IApiSelection"
 import { API_TYPE_KEY } from "@/utils/cookies-keys";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const apiOptions: IApiSelectionConfig[] = [
