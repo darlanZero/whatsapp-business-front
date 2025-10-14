@@ -1,9 +1,11 @@
 'use client'
 
-import { UserContext } from "@/contexts/user-context";
+import { useUser } from "@/hooks/use-user";
+import Cookies from "js-cookie";
 import { IApiSelection, IApiSelectionConfig } from "@/interfaces/IApiSelection"
+import { API_TYPE_KEY } from "@/utils/cookies-keys";
 import { useRouter } from "next/navigation";
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 const apiOptions: IApiSelectionConfig[] = [
     {
@@ -21,22 +23,28 @@ const apiOptions: IApiSelectionConfig[] = [
 const SelectApiPage = () => {
     const [selectedApi, setSelectedApi] = useState<IApiSelection | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const { setApiType } = useContext(UserContext);
-    const router = useRouter();
+    const { setApiType } = useUser();
 
-    const handleApiSelection = async (apiType: IApiSelection) => {
+    const handleApiSelection = (apiType: IApiSelection) => {
+        console.log('API selecionada:', apiType);
         setIsLoading(true);
         try {
-            // Salvar no contexto e nos cookies
+            console.log('Salvando API selecionada no contexto...');
+            // Salvar no contexto
             setApiType(apiType);
+            console.log('Salvando diretamente nos cookies...')
+            Cookies.set(API_TYPE_KEY, apiType, {
+                expires: 30, 
+                path: '/',
+                sameSite: 'lax'
+            })
 
-            // Redirecionar para a página de login apropriada
-            if (apiType === 'evolution') {
-                router.push('/login');
-            } else {
-                // Para Meta, redirecionar para a página que iniciará o fluxo de login da Meta
-                router.push('/login'); // Você pode criar uma página específica para Meta
-            }
+            console.log('Cookie salvo:', Cookies.get(API_TYPE_KEY));
+
+            console.log('Redirecionando para /login...');
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 200); 
         } catch (error) {
             console.error('Erro ao selecionar a API:', error);
         } finally {
@@ -72,6 +80,7 @@ const SelectApiPage = () => {
                                     <input 
                                         type="radio"
                                         name="api-type"
+                                        value={option.type}
                                         checked={selectedApi === option.type}
                                         onChange={() => setSelectedApi(option.type)}
                                         className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
@@ -92,6 +101,7 @@ const SelectApiPage = () => {
 
                 <div>
                     <button
+                        type="button"
                         onClick={() => selectedApi && handleApiSelection(selectedApi)}
                         disabled={!selectedApi || isLoading}
                         className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium

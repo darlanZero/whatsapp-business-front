@@ -10,7 +10,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { API_TYPE_KEY, TOKEN_KEY, TOKEN_WHATSAPP_KEY } from "@/utils/cookies-keys";
 import { IApiSelection } from "@/interfaces/IApiSelection";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 interface UserProviderProps {
   children: React.ReactNode;
