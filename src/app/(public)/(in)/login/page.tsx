@@ -59,8 +59,12 @@ const useLoginPage = () => {
 
   const loginMeta = async () => {
     try {
-      const metaAuthUrl = `${process.env.NEXT_PUBLIC_META_API_BASE_URL}/auth/facebook`;
-      window.location.href = metaAuthUrl;
+      setIsRedirecting(true);
+      const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const metaAuthUrl = `${backendUrl}/whatsapp/auth/facebook`;
+
+      console.log("Redirecionando para o Meta Auth URL:", metaAuthUrl);
+      window.location.href = metaAuthUrl; 
     } catch(error) {
       toast.error("Erro ao redirecionar para o Meta.");
       console.error(error);
@@ -122,12 +126,12 @@ export default function Login() {
           </div>
 
           <button
-            disabled={isSubmitting}
+            disabled={isSubmitting || isRedirecting}
             onClick={() => login({})}
             className="bg-blue-500 p-3 flex-1 flex items-center justify-center gap-4 rounded-full 
             font-semibold opacity-90 hover:opacity-100 data-[isloading=true]:opacity-60"
           >
-            {isSubmitting && <SimpleLoader className="w-4 h-4" />}
+            {(isSubmitting || isRedirecting) && <SimpleLoader className="w-4 h-4" />}
             Continuar com Meta
           </button>
 

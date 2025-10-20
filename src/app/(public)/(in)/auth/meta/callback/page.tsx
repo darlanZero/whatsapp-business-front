@@ -14,7 +14,7 @@ export default function MetaCallbackPage() {
 
   useEffect(() => {
     const processCallback = async () => {
-      const code = searchParams.get('code');
+      const token = searchParams.get('token');
       const error = searchParams.get('error');
 
       if (error) {
@@ -23,23 +23,22 @@ export default function MetaCallbackPage() {
         return;
       }
 
-      if (code) {
+      if (token) {
         try {
-          const token = await handleMetaCallback(code);
-          
-          if (token) {
-            Cookies.set(TOKEN_KEY, token);
-            toast.success('Login efetuado com sucesso!');
-            router.push('/dashboard');
-          } else {
-            toast.error('Erro ao processar autenticação');
-            router.push('/login');
-          }
-        } catch (error) {
-          console.error('Callback error:', error);
-          toast.error('Erro ao processar autenticação');
+          console.log('Token recebido, salvando...')
+          Cookies.set(TOKEN_KEY, token, {expires: 7});
+          toast.success('Autenticação com Meta realizada com sucesso!');
+          setTimeout(() => {
+            router.push('/dashboard')
+          }, 500)
+      } catch (e) {
+          toast.error('Erro ao processar o token de autenticação.');
+          console.error(e);
           router.push('/login');
         }
+      } else {
+        toast.error('Token de autenticação não encontrado no callback.');
+        router.push('/login');
       }
     };
 
