@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { handleMetaCallback } from '@/hooks/use-login';
 import Cookies from 'js-cookie';
 import { TOKEN_KEY } from '@/utils/cookies-keys';
 import { toast } from 'react-toastify';
