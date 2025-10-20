@@ -11,7 +11,7 @@ export default function middleware(request: NextRequest) {
   const isPublicPage = PUBLIC_PAGES.includes(pathname);
   const isSessionExpiredPage = pathname === "/session-expired";
   const isApiSelectionPage = pathname === "/api-selection";
-  const isLoginPage = pathname === "/login";
+  //const isLoginPage = pathname === "/login";
 
   console.log("Middleware - Pathname:", pathname);
   console.log('Middleware - Token:', token ? 'Presente' : 'Ausente');
