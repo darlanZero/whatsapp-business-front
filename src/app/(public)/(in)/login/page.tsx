@@ -20,6 +20,7 @@ import { useUser } from "@/hooks/use-user";
 const useLoginPage = () => {
   const router = useRouter();
   const { isMeta, isEvolution} = useUser();
+  const [isRedirecting, setIsRedirecting] = useState<boolean>(false);
 
   const form = useForm<LoginSchemaProps>({
     resolver: zodResolver(isEvolution ? LoginEvolutionSchema : loginMetaSchema),
@@ -60,8 +61,8 @@ const useLoginPage = () => {
   const loginMeta = async () => {
     try {
       setIsRedirecting(true);
-      const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-      const metaAuthUrl = `${backendUrl}/whatsapp/auth/facebook`;
+      const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+      const metaAuthUrl = `${backendUrl}/api/whatsapp/auth/facebook`;
 
       console.log("Redirecionando para o Meta Auth URL:", metaAuthUrl);
       window.location.href = metaAuthUrl; 
@@ -81,11 +82,11 @@ const useLoginPage = () => {
     }
   }
 
-  return { form, login, isMeta, isEvolution };
+  return { form, login, isMeta, isEvolution, isRedirecting };
 };
 
 export default function Login() {
-  const { form, login, isMeta, isEvolution } = useLoginPage();
+  const { form, login, isMeta, isEvolution, isRedirecting } = useLoginPage();
   const { register, handleSubmit, formState } = form;
   const { errors, isSubmitting } = formState;
   const [continueLogged, setContinueLogged] = useState<boolean>(false);
