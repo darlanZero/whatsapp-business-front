@@ -2,6 +2,7 @@
 
 import { IApiSelection } from "@/interfaces/IApiSelection";
 import { JWT_DECODED_DATA, JWT_DECODED_DATA_WHATSAPP } from "@/interfaces/jwt-decoded-data";
+import { IBusinessAccount } from "@/interfaces/IUserMeta";
 import { createContext } from "react";
 
 interface UserContextType {
@@ -14,6 +15,12 @@ interface UserContextType {
   clearApiType: () => void;
   isMeta: boolean;
   isEvolution: boolean;
+  
+  // Novos campos para suporte a múltiplas empresas Meta
+  selectedBusinessId: string | null;
+  setSelectedBusinessId: (businessId: string | null) => void;
+  businessAccounts: IBusinessAccount[];
+  hasMultipleBusinesses: boolean;
 }
 
 export const UserContext = createContext<UserContextType>({
@@ -25,5 +32,9 @@ export const UserContext = createContext<UserContextType>({
   setApiType: () => {},
   clearApiType: () => {},
   isMeta: false,
-  isEvolution: false
+  isEvolution: false,
+  selectedBusinessId: null,
+  setSelectedBusinessId: () => {},
+  businessAccounts: [],
+  hasMultipleBusinesses: false,
 });
